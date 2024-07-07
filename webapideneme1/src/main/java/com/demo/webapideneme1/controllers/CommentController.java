@@ -98,8 +98,7 @@ public class CommentController {
 			{
 				if(commentToBeQuoted!=null)
 				{
-					if(commentToBeQuoted.getGroup()==group
-							&& group.getComments().contains(comment))
+					if(commentToBeQuoted.getGroup()==group)
 					comment.setQuotedComment(commentToBeQuoted);
 				}else comment.setQuotedComment(null);
 			}
