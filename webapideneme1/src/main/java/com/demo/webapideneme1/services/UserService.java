@@ -28,6 +28,7 @@ import com.demo.webapideneme1.repositories.UserRepository;
 public class UserService {
 	UserRepository userRepository;
 	
+	@Autowired
 	public UserService(UserRepository userRepository) {
 		super();
 		this.userRepository = userRepository;

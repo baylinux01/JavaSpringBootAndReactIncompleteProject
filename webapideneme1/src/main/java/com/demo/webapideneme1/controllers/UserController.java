@@ -27,6 +27,7 @@ import com.demo.webapideneme1.services.UserService;
 public class UserController {
 	UserService userService;
 	
+	@Autowired
 	public UserController(UserService userService) {
 		super();
 		this.userService = userService;

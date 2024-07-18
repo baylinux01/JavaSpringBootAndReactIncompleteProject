@@ -3,7 +3,7 @@ package com.demo.webapideneme1.services;
 import java.util.List;
 import java.util.Optional;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.demo.webapideneme1.models.Comment;
@@ -17,7 +17,7 @@ public class GroupService {
 	UserService userService;
 	CommentService commentService;
 	
-
+	@Autowired
 	public GroupService(GroupRepository groupRepository, UserService userService,CommentService commentService) {
 		super();
 		this.groupRepository = groupRepository;

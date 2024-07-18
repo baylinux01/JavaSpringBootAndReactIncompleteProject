@@ -41,7 +41,7 @@ public class CommentController {
 //			return comment.get();
 //		}else return null;
 //	}
-	
+	@Autowired
 	public CommentController(CommentService commentService, UserService userService, GroupService groupService) {
 		super();
 		this.commentService = commentService;
