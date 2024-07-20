@@ -6,7 +6,7 @@ import axios from "axios";
 export default function User({user2,setUser2,user,setUser}) {
     const{user2Id}=useParams();
     
-    const fetchUser=()=>{
+    const fetchUser2=()=>{
       axios.defaults.baseURL="http://localhost:8083";
       return axios.get("/users/getoneuserbyid",{params:{userId:user2Id}})
       .then((response)=>{setUser2(response.data)});
@@ -16,7 +16,7 @@ export default function User({user2,setUser2,user,setUser}) {
     //fetchGroup();
     //fetchComments();
     //fetchMembers();
-    fetchUser();
+    fetchUser2();
     // fetch("/groups/getonegroupbyid?groupId="+groupId).then(response=>{return response.json()})
     // .then(data=>{setGroup(data)})
  },[user2])

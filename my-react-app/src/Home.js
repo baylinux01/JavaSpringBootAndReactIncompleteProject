@@ -27,10 +27,13 @@ export default function Home(
     axios.get("/groups/getallgroups").then((response)=>
       {setGroups([...response.data]);});
   }
+  
   useEffect(()=>{
     
     
-    fetchGroups();},[groups]);
+    fetchGroups();
+    
+  },[]);
 
 
   function deleteGroup(groupId)
@@ -66,7 +69,15 @@ export default function Home(
 
   
   return (
-    
+    <>
+    <div>
+      {Object.keys(user).length!==0?
+      <img style={{position:"absolute",height:"385px",width:"400px",
+        top:"160px",left:"100px"
+      }} src={`data:image/*;base64,${user.userImage}`}/>:
+      <div></div>
+    }
+    </div>
     <div style={{ marginTop:"100px",marginLeft:"550px",
     width:"400px",minHeight:"500px",height:"auto",textDecoration:"none"}}>
       {
@@ -151,7 +162,7 @@ export default function Home(
        : <div>Home</div>
     }
     </div>
-    
+    </>
     
    
   )

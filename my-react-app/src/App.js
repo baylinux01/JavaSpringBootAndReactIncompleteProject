@@ -44,7 +44,7 @@ function App() {
   function fetchGroups(){
     axios.defaults.baseURL="http://localhost:8083";
     axios.get("/groups/getallgroups").then((response)=>
-      {console.log(response.data); setGroups([...response.data])});
+      {setGroups([...response.data])});
   }
 
  
