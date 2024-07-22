@@ -15,21 +15,27 @@ public class ConnectionRequestService {
  
 	ConnectionRequestRepository connectionRequestRepository;
 	UserService userService;
+	
 	@Autowired
 	public ConnectionRequestService(ConnectionRequestRepository connectionRequestRepository, UserService userService) {
 		super();
 		this.connectionRequestRepository = connectionRequestRepository;
 		this.userService = userService;
 	}
+	
 	public List<ConnectionRequest> getAllConnectionRequests() {
 		// TODO Auto-generated method stub
 		return connectionRequestRepository.findAll();
 	}
+	
 	public String createConnectionRequest(Long connectionRequestSenderId, Long connectionRequestReceiverId) {
 		
 		List<ConnectionRequest> allConReqs=connectionRequestRepository.findAll();
 		User connectionRequestSender=userService.getOneUserById(connectionRequestSenderId);
 		User connectionRequestReceiver=userService.getOneUserById(connectionRequestReceiverId);
+		if(connectionRequestReceiver.getBannedUsers().contains(connectionRequestSender)
+				||connectionRequestSender.getBannedUsers().contains(connectionRequestReceiver))
+			return "conreq cannot be created because of a ban";
 		if(allConReqs!=null&&allConReqs.size()>0)
 		{
 			for(ConnectionRequest conReq:allConReqs)

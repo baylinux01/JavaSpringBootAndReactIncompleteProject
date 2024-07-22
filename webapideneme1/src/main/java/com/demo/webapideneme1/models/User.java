@@ -1,5 +1,6 @@
 package com.demo.webapideneme1.models;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -38,28 +39,8 @@ public class User {
 	private List<Group> memberedGroups;
 	@OneToMany(fetch=FetchType.EAGER)
 	private List<Group> ownedGroups;
-	
-	
-	
-	public Date getBirthDate() {
-		return birthDate;
-	}
-	public void setBirthDate(Date date) {
-		this.birthDate=date;
-	}
-	
-	public byte[] getUserImage() {
-		return userImage;
-	}
-
-	public void setUserImage(byte[] userImage) {
-		this.userImage = userImage;
-	}
-
-	public User() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	@ManyToMany
+	private List<User> bannedUsers;
 	
 	public long getId() {
 		return id;
@@ -91,6 +72,18 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public byte[] getUserImage() {
+		return userImage;
+	}
+	public void setUserImage(byte[] userImage) {
+		this.userImage = userImage;
+	}
+	public Date getBirthDate() {
+		return birthDate;
+	}
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
+	}
 	public List<Comment> getComments() {
 		return comments;
 	}
@@ -109,11 +102,23 @@ public class User {
 	public void setOwnedGroups(List<Group> ownedGroups) {
 		this.ownedGroups = ownedGroups;
 	}
-
+	public List<User> getBannedUsers() {
+		return bannedUsers;
+	}
+	public void setBannedUsers(List<User> bannedUsers) {
+		this.bannedUsers = bannedUsers;
+	}
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", username=" + username + ", password="
-				+ password + "]";
+				+ password + ", userImage=" + Arrays.toString(userImage) + ", birthDate=" + birthDate + ", comments="
+				+ comments + ", memberedGroups=" + memberedGroups + ", ownedGroups=" + ownedGroups + ", bannedUsers="
+				+ bannedUsers + "]";
+	}
+	
+	
+	
+	
 	}
 	
 	
@@ -122,4 +127,4 @@ public class User {
 	
 	
 
-}
+

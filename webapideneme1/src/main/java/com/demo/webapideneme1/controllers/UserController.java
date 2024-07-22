@@ -32,6 +32,12 @@ public class UserController {
 		super();
 		this.userService = userService;
 	}
+	
+	@GetMapping("/getbannedusersofauser")
+	public List<User> getBannedUsersOfAUser(Long userId)
+	{
+		return userService.getBannedUsersOfAUser(userId);
+	}
 
 	@GetMapping("/getsearchedusers")
 	public List<User> getSearchedUsers(String searchedWords)

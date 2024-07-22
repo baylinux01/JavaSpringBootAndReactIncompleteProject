@@ -216,6 +216,13 @@ public class UserService {
 		return sortedSearchedUsersList;
 	}
 
+	public List<User> getBannedUsersOfAUser(Long userId) {
+		User user=userRepository.findById(userId).orElse(null);
+		if(user!=null&&user.getBannedUsers()!=null)
+		return user.getBannedUsers();
+		else return null;
+	}
+
 	
 
 	
