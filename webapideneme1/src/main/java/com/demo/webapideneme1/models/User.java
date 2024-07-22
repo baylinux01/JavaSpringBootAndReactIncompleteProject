@@ -40,6 +40,7 @@ public class User {
 	private List<Group> ownedGroups;
 	
 	
+	
 	public Date getBirthDate() {
 		return birthDate;
 	}

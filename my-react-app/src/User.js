@@ -21,6 +21,16 @@ export default function User({user2,setUser2,user,setUser}) {
     // .then(data=>{setGroup(data)})
  },[user2])
   return (
-    <div>{user2.name} {user2.surname}</div>
+    <div>
+    {Object.keys(user2).length!==0?
+    <img style={{position:"absolute",height:"100px",width:"100px",
+      top:"50px",left:"0px"
+    }} src={`data:image/*;base64,${user2.userImage}`}/>:
+    <div></div>
+  }
+    <div style={{position:"absolute",
+      top:"50px",left:"120px"
+    }} >{user2.name} {user2.surname}</div>
+    </div>
   )
 }
