@@ -33,6 +33,13 @@ public class UserController {
 		this.userService = userService;
 	}
 	
+	@PostMapping("/banuser")
+	public String banUser(Long banningUserId,Long userToBeBannedId) 
+	{
+		String result=userService.banUser(banningUserId,userToBeBannedId);
+		return result;
+	}
+	
 	@GetMapping("/getbannedusersofauser")
 	public List<User> getBannedUsersOfAUser(Long userId)
 	{

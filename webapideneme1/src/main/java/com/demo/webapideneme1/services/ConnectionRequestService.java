@@ -9,18 +9,19 @@ import org.springframework.stereotype.Service;
 import com.demo.webapideneme1.models.ConnectionRequest;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.repositories.ConnectionRequestRepository;
+import com.demo.webapideneme1.repositories.UserRepository;
 
 @Service
 public class ConnectionRequestService {
  
 	ConnectionRequestRepository connectionRequestRepository;
-	UserService userService;
+	UserRepository userRepository;
 	
 	@Autowired
-	public ConnectionRequestService(ConnectionRequestRepository connectionRequestRepository, UserService userService) {
+	public ConnectionRequestService(ConnectionRequestRepository connectionRequestRepository, UserRepository userRepository) {
 		super();
 		this.connectionRequestRepository = connectionRequestRepository;
-		this.userService = userService;
+		this.userRepository = userRepository;
 	}
 	
 	public List<ConnectionRequest> getAllConnectionRequests() {
@@ -31,8 +32,8 @@ public class ConnectionRequestService {
 	public String createConnectionRequest(Long connectionRequestSenderId, Long connectionRequestReceiverId) {
 		
 		List<ConnectionRequest> allConReqs=connectionRequestRepository.findAll();
-		User connectionRequestSender=userService.getOneUserById(connectionRequestSenderId);
-		User connectionRequestReceiver=userService.getOneUserById(connectionRequestReceiverId);
+		User connectionRequestSender=userRepository.findById(connectionRequestSenderId).orElse(null);
+		User connectionRequestReceiver=userRepository.findById(connectionRequestReceiverId).orElse(null);
 		if(connectionRequestReceiver.getBannedUsers().contains(connectionRequestSender)
 				||connectionRequestSender.getBannedUsers().contains(connectionRequestReceiver))
 			return "conreq cannot be created because of a ban";
@@ -58,6 +59,12 @@ public class ConnectionRequestService {
 			}catch(Exception ex){
 				return ex.getMessage();
 			}
+	}
+
+	public void saveAll(List<ConnectionRequest> conreqs) {
+		connectionRequestRepository.deleteAll();
+		connectionRequestRepository.saveAll(conreqs);
+		
 	}
 	
 	

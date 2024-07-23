@@ -41,6 +41,8 @@ public class User {
 	private List<Group> ownedGroups;
 	@ManyToMany
 	private List<User> bannedUsers;
+	@ManyToMany
+	private List<User> connections;
 	
 	public long getId() {
 		return id;
@@ -108,18 +110,22 @@ public class User {
 	public void setBannedUsers(List<User> bannedUsers) {
 		this.bannedUsers = bannedUsers;
 	}
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", username=" + username + ", password="
-				+ password + ", userImage=" + Arrays.toString(userImage) + ", birthDate=" + birthDate + ", comments="
-				+ comments + ", memberedGroups=" + memberedGroups + ", ownedGroups=" + ownedGroups + ", bannedUsers="
-				+ bannedUsers + "]";
+	public List<User> getConnections() {
+		return connections;
+	}
+	public void setConnections(List<User> connections) {
+		this.connections = connections;
 	}
 	
 	
 	
+
+}
 	
-	}
+	
+	
+	
+	
 	
 	
 	

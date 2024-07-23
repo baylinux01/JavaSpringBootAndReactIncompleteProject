@@ -20,18 +20,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.demo.webapideneme1.models.ConnectionRequest;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.repositories.UserRepository;
 
 
 @Service
 public class UserService {
+	
 	UserRepository userRepository;
+	ConnectionRequestService connectionRequestService;
+	
 	
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService) {
 		super();
 		this.userRepository = userRepository;
+		this.connectionRequestService = connectionRequestService;
 	}
 
 	public String saveUser(User user) {
@@ -221,6 +226,47 @@ public class UserService {
 		if(user!=null&&user.getBannedUsers()!=null)
 		return user.getBannedUsers();
 		else return null;
+	}
+
+	public String banUser(Long banningUserId, Long userToBeBannedId) {
+		
+		User banningUser=userRepository.findById(banningUserId).orElse(null);
+		User userToBeBanned=userRepository.findById(userToBeBannedId).orElse(null);
+		if(!banningUser.getBannedUsers().contains(userToBeBanned))
+		{
+			if(banningUser.getConnections().contains(userToBeBanned))
+				banningUser.getConnections().remove(userToBeBanned);
+			if(userToBeBanned.getConnections().contains(banningUser))
+				userToBeBanned.getConnections().remove(banningUser);
+			List<ConnectionRequest> conreqs=
+					connectionRequestService.getAllConnectionRequests();
+			if(conreqs!=null&&conreqs.size()>0)
+			{
+				int i=0;
+				while(i<conreqs.size())
+				{
+					if((conreqs.get(i).getConnectionRequestSender()==
+							userToBeBanned && conreqs.get(i).getConnectionRequestReceiver()==banningUser)
+							||
+							(conreqs.get(i).getConnectionRequestReceiver()==
+							userToBeBanned && conreqs.get(i).getConnectionRequestSender()==banningUser))
+						{
+							conreqs.remove(conreqs.get(i));
+							i--;
+						}
+							i++;
+				}
+			}
+			banningUser.getBannedUsers().add(userToBeBanned);
+			connectionRequestService.saveAll(conreqs);
+			userRepository.save(banningUser);
+			userRepository.save(userToBeBanned);
+			return "success";
+			
+			
+		}
+		
+		return "false";
 	}
 
 	
