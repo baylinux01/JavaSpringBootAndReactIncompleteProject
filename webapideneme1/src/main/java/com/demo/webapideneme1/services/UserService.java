@@ -238,8 +238,10 @@ public class UserService {
 				banningUser.getConnections().remove(userToBeBanned);
 			if(userToBeBanned.getConnections().contains(banningUser))
 				userToBeBanned.getConnections().remove(banningUser);
+			
 			List<ConnectionRequest> conreqs=
 					connectionRequestService.getAllConnectionRequests();
+			List<ConnectionRequest> conreqstoberemoved=new ArrayList<ConnectionRequest>();
 			if(conreqs!=null&&conreqs.size()>0)
 			{
 				int i=0;
@@ -251,14 +253,14 @@ public class UserService {
 							(conreqs.get(i).getConnectionRequestReceiver()==
 							userToBeBanned && conreqs.get(i).getConnectionRequestSender()==banningUser))
 						{
-							conreqs.remove(conreqs.get(i));
-							i--;
+							conreqstoberemoved.add(conreqs.get(i));
+							
 						}
 							i++;
 				}
 			}
 			banningUser.getBannedUsers().add(userToBeBanned);
-			connectionRequestService.saveAll(conreqs);
+			connectionRequestService.removeAll(conreqstoberemoved);
 			userRepository.save(banningUser);
 			userRepository.save(userToBeBanned);
 			return "success";

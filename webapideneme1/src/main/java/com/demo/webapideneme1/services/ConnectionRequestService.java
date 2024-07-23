@@ -62,8 +62,13 @@ public class ConnectionRequestService {
 	}
 
 	public void saveAll(List<ConnectionRequest> conreqs) {
-		connectionRequestRepository.deleteAll();
+		//connectionRequestRepository.deleteAll();
 		connectionRequestRepository.saveAll(conreqs);
+		
+	}
+
+	public void removeAll(List<ConnectionRequest> conreqstoberemoved) {
+		connectionRequestRepository.deleteAll(conreqstoberemoved);
 		
 	}
 	
