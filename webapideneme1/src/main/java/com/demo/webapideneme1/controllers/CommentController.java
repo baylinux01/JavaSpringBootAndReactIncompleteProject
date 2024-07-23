@@ -96,12 +96,14 @@ public class CommentController {
 			comment.setContent(content);
 			if(commentToBeQuoted!=null)
 			{
-				if(commentToBeQuoted!=null)
+				if(!commentToBeQuoted.getOwner().getBannedUsers().contains(user)
+						&&!user.getBannedUsers().contains(commentToBeQuoted.getOwner()))
 				{
 					if(commentToBeQuoted.getGroup()==group)
 					comment.setQuotedComment(commentToBeQuoted);
 				}else comment.setQuotedComment(null);
 			}
+			else comment.setQuotedComment(null);
 			result =commentService.saveComment(comment);
 			return result;
 			

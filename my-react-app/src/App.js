@@ -39,6 +39,7 @@ function App() {
   const[groups,setGroups]=useState([]);
   const [group,setGroup]=useState({});
   const [user2,setUser2]=useState({});
+  const[bannedUsersOfUser,setBannedUsersOfUser]=useState({});
   
 
   function fetchGroups(){
@@ -77,7 +78,8 @@ function App() {
 
     <Route exact path="/groups/group/:groupId" element={<Group 
     group={group} setGroup={setGroup}
-    user={user} setUser={setUser}>
+    user={user} setUser={setUser}
+    bannedUsersOfUser={bannedUsersOfUser} setBannedUsersOfUser={setBannedUsersOfUser}>
     </Group>}></Route>
 
     <Route exact path="/groupcreationpage" 

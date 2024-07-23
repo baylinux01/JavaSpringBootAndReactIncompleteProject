@@ -33,15 +33,17 @@ public class UserController {
 		this.userService = userService;
 	}
 	
+	
+	
 	@PostMapping("/deleteconnection")
-	public String deleteconnection(Long deletingUserId,Long userToBeDeletedId) 
+	public String deleteConnection(Long deletingUserId,Long userToBeDeletedId) 
 	{
 		String result=userService.deleteConnection(deletingUserId,userToBeDeletedId);
 		return result;
 	}
 	
 	@PostMapping("/acceptconnection")
-	public String acceptconnection(Long acceptingUserId,Long userToBeAcceptedId) 
+	public String acceptConnection(Long acceptingUserId,Long userToBeAcceptedId) 
 	{
 		String result=userService.acceptConnection(acceptingUserId,userToBeAcceptedId);
 		return result;

@@ -12,13 +12,14 @@ import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
 
 
-export default function Group({group,setGroup,user,setUser}) {
+export default function Group({group,setGroup,user,setUser,bannedUsersOfUser,setBannedUsersOfUser}) {
 
   
 const[newCommentContent,setNewCommentContent] =useState("");
 const[commentToBeQuoted,setCommentToBeQuoted]=useState({content:""});
 const[groupMembers,setGroupMembers]=useState([]);
 const[groupComments,setGroupComments]=useState([]);
+const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
 
 const{groupId}=useParams();
 
@@ -39,6 +40,21 @@ function fetchComments(){
     axios.defaults.baseURL="http://localhost:8083";
     axios.get("/users/getoneuserbyid",{params:{userId:user.id}})
     .then((response)=>{setUser({...response.data})});
+    console.log(user)
+  }
+
+  function fetchBannedUsersOfUser(){
+    axios.defaults.baseURL="http://localhost:8083";
+    axios.get("/users/getbannedusersofauser",{params:{userId:user.id}})
+    .then((response)=>{setBannedUsersOfUser([...response.data])});
+    
+  }
+
+  function fetchBannedUsersOfCommentOwner(id){
+    axios.defaults.baseURL="http://localhost:8083";
+    axios.get("/users/getbannedusersofauser",{params:{userId:id}})
+    .then((response)=>{setBannedUsersOfCommentOwner([...response.data])});
+    
   }
 
 
@@ -51,7 +67,9 @@ function fetchComments(){
         fetchComments();
         fetchMembers(); 
         fetchUser();  
-     },[user,group,groupComments,groupMembers]);
+        fetchBannedUsersOfUser();
+        
+     },[user,group,groupComments,groupMembers,bannedUsersOfUser]);
 
      
 
@@ -87,6 +105,7 @@ function fetchComments(){
       fetchMembers();
       fetchGroup();
       fetchUser();
+      fetchBannedUsersOfUser();
     
     }
     
@@ -117,10 +136,16 @@ function fetchComments(){
       <div></div>
       <div></div>
       </div>}
+      
+      
+      
         <ListGroup.Item>Comment Owner: <Link to={"/users/user/"+comment.owner.id}>{comment.owner.name} {comment.owner.surname}</Link></ListGroup.Item>
         <ListGroup.Item>Comment Content: {comment.content}</ListGroup.Item>
         {_.find(group.members,user)?
-          <Button variant="info" sync="true" onClick={()=>setCommentToBeQuoted({...comment})}>Quote</Button>
+          <Button variant="info" sync="true" onClick={()=>!_.find(bannedUsersOfUser,comment.owner.id)
+            && !_.find(bannedUsersOfCommentOwner,user)?
+            setCommentToBeQuoted({...comment}):
+        setCommentToBeQuoted(null)}>Quote</Button>
           :<div></div>}
       </ListGroup>
       </div>
