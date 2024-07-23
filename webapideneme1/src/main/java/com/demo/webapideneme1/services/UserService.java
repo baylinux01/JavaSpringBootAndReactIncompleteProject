@@ -308,6 +308,26 @@ public class UserService {
 		
 	}
 
+	public String deleteConnection(Long deletingUserId, Long userToBeDeletedId) {
+		User deletingUser=userRepository.findById(deletingUserId).orElse(null);
+		User userToBeDeleted=userRepository.findById(userToBeDeletedId).orElse(null);
+		if(deletingUser!=null&&userToBeDeleted!=null)
+		{
+			if(deletingUser.getConnections().contains(userToBeDeleted)
+					&&userToBeDeleted.getConnections().contains(deletingUser))
+			{
+				deletingUser.getConnections().remove(userToBeDeleted);
+				userToBeDeleted.getConnections().remove(deletingUser);
+				userRepository.save(deletingUser);
+				userRepository.save(userToBeDeleted);
+				return "success";
+			}
+			else return "no connection to delete";
+		}
+		else
+		return "one of the users not found";
+	}
+
 	
 
 	
