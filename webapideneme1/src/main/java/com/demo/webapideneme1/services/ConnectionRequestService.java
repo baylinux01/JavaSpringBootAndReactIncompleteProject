@@ -37,6 +37,9 @@ public class ConnectionRequestService {
 		if(connectionRequestReceiver.getBannedUsers().contains(connectionRequestSender)
 				||connectionRequestSender.getBannedUsers().contains(connectionRequestReceiver))
 			return "conreq cannot be created because of a ban";
+		if(connectionRequestReceiver.getConnections().contains(connectionRequestSender)
+				||connectionRequestSender.getConnections().contains(connectionRequestReceiver))
+			return "there is already a connection between these two users";
 		if(allConReqs!=null&&allConReqs.size()>0)
 		{
 			for(ConnectionRequest conReq:allConReqs)
@@ -69,6 +72,11 @@ public class ConnectionRequestService {
 
 	public void removeAll(List<ConnectionRequest> conreqstoberemoved) {
 		connectionRequestRepository.deleteAll(conreqstoberemoved);
+		
+	}
+
+	public void removeConnectionRequest(ConnectionRequest connectionRequest) {
+		connectionRequestRepository.delete(connectionRequest);
 		
 	}
 	

@@ -271,6 +271,43 @@ public class UserService {
 		return "false";
 	}
 
+	public String acceptConnection(Long acceptingUserId, Long userToBeAcceptedId) {
+		User acceptingUser=userRepository.findById(acceptingUserId).orElse(null);
+		User userToBeAccepted=userRepository.findById(userToBeAcceptedId).orElse(null);
+		List<ConnectionRequest> conreqs=
+				connectionRequestService.getAllConnectionRequests();
+		if(acceptingUser!=null&&userToBeAccepted!=null)
+		{
+			if(conreqs!=null&&conreqs.size()>0)
+			{
+				int i=0;
+				while(i<conreqs.size())
+				{
+					if((conreqs.get(i).getConnectionRequestSender()==
+							userToBeAccepted && conreqs.get(i).getConnectionRequestReceiver()==acceptingUser)
+						)
+						{
+							connectionRequestService.removeConnectionRequest(conreqs.get(i));
+							if(!acceptingUser.getConnections().contains(userToBeAccepted)
+									&&!userToBeAccepted.getConnections().contains(acceptingUser))
+							{
+								acceptingUser.getConnections().add(userToBeAccepted);
+								userToBeAccepted.getConnections().add(acceptingUser);
+								userRepository.save(acceptingUser);
+								userRepository.save(userToBeAccepted);
+								return "success";
+							}
+							
+						}
+							i++;
+				}
+			}return "There is no conreq to accept";
+		} return "user not found";
+		
+		
+		
+	}
+
 	
 
 	

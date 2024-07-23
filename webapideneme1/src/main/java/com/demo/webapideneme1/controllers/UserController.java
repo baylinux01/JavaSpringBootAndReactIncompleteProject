@@ -32,7 +32,12 @@ public class UserController {
 		super();
 		this.userService = userService;
 	}
-	
+	@PostMapping("/acceptconnection")
+	public String acceptconnection(Long acceptingUserId,Long userToBeAcceptedId) 
+	{
+		String result=userService.acceptConnection(acceptingUserId,userToBeAcceptedId);
+		return result;
+	}
 	@PostMapping("/banuser")
 	public String banUser(Long banningUserId,Long userToBeBannedId) 
 	{
