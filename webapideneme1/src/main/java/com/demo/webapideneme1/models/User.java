@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +19,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 public class User {
 

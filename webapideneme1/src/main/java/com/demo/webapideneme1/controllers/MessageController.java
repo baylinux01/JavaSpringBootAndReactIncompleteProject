@@ -1,5 +1,7 @@
 package com.demo.webapideneme1.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +45,13 @@ public class MessageController {
 		return messageService.editMessageContent(messageId,newMessageContent);
 	}
 	
+	@PostMapping("/editmessagestatus")
+	public String editMessageContent(Long messageId,
+			boolean newMessageStatus)
+	{
+		return messageService.editMessageStatus(messageId,newMessageStatus);
+	}
+	
 	@PostMapping("/editquotedmessageofamessage")
 	public String editQuotedMessageOfAMessage(Long messageId,
 			Long newQuotedMessageId)
@@ -55,5 +64,12 @@ public class MessageController {
 	{
 		return messageService.deleteMessage(messageId);
 	}
+	
+	@GetMapping("/getmessagesbetweentwousers")
+	public List<Message> getMessagesBetweenTwoUsers(Long user1Id,Long user2Id)
+	{
+		return messageService.getMessagesBetweenTwoUsers(user1Id,user2Id);
+	}
+	
 
 }

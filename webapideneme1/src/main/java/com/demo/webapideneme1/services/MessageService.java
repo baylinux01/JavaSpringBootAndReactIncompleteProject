@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.services;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,32 @@ public class MessageService {
 			return "fail";
 		
 		
+	}
+
+	public List<Message> getMessagesBetweenTwoUsers(Long user1Id, Long user2Id) {
+		User user1=userService.getOneUserById(user1Id);
+		User user2=userService.getOneUserById(user2Id);
+		List<Message> messages=null;
+		if(user1!=null && user2!=null)
+		{
+			messages=messageRepository
+					.findByMessageSenderandMessageReceiver(user1Id,user2Id);
+			return messages;
+		}else
+		
+		return null;
+	}
+
+	public String editMessageStatus(Long messageId, boolean newMessageStatus) {
+		Message message=messageRepository.findById(messageId).orElse(null);
+		if(message!=null)
+		{
+			message.setRead(newMessageStatus);
+			messageRepository.save(message);
+			return "success";
+		}
+		
+		return "fail";
 	}
 
 	
