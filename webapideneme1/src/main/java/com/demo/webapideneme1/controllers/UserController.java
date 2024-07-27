@@ -93,7 +93,8 @@ public class UserController {
 		return user;
 	}
 	@PostMapping("/adduser")
-	public  String addUser(String name, String surname, String username,  String password, MultipartFile userimage, String birthdate) throws IOException 
+	public  String addUser(String name, String surname, String username,  
+			String password, MultipartFile userimage, String birthdate) throws IOException 
 	{
 		User user=new User();
 		user.setName(name);

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,21 +39,21 @@ public class MessageController {
 		return messageService.createMessage(messageSenderId,messageReceiverId,
 				messageContent,quotedMessageId);
 	}
-	@PostMapping("/editmessagecontent")
+	@PutMapping("/editmessagecontent")
 	public String editMessageContent(Long messageId,
 			String newMessageContent)
 	{
 		return messageService.editMessageContent(messageId,newMessageContent);
 	}
 	
-	@PostMapping("/editmessagestatus")
+	@PutMapping("/editmessagestatus")
 	public String editMessageContent(Long messageId,
 			boolean newMessageStatus)
 	{
 		return messageService.editMessageStatus(messageId,newMessageStatus);
 	}
 	
-	@PostMapping("/editquotedmessageofamessage")
+	@PutMapping("/editquotedmessageofamessage")
 	public String editQuotedMessageOfAMessage(Long messageId,
 			Long newQuotedMessageId)
 	{
