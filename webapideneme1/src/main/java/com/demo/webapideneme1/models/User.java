@@ -19,8 +19,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-@JsonIdentityInfo
-(generator=ObjectIdGenerators.PropertyGenerator.class, property="id",scope=User.class)
+
 @Entity
 public class User {
 	
