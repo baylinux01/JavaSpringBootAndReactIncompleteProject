@@ -232,6 +232,7 @@ public class UserService {
 		
 		User banningUser=userRepository.findById(banningUserId).orElse(null);
 		User userToBeBanned=userRepository.findById(userToBeBannedId).orElse(null);
+		if(banningUser==userToBeBanned) return "false";
 		if(!banningUser.getBannedUsers().contains(userToBeBanned))
 		{
 			if(banningUser.getConnections().contains(userToBeBanned))
@@ -276,7 +277,7 @@ public class UserService {
 		User userToBeAccepted=userRepository.findById(userToBeAcceptedId).orElse(null);
 		List<ConnectionRequest> conreqs=
 				connectionRequestService.getAllConnectionRequests();
-		if(acceptingUser!=null&&userToBeAccepted!=null)
+		if(acceptingUser!=null && userToBeAccepted!=null && acceptingUser!=userToBeAccepted)
 		{
 			if(conreqs!=null&&conreqs.size()>0)
 			{
@@ -326,6 +327,14 @@ public class UserService {
 		}
 		else
 		return "one of the users not found";
+	}
+
+	public List<User> getConnectionsOfAUser(Long userId) {
+		User user=userRepository.findById(userId).orElse(null);
+		if(user!=null&&user.getConnections()!=null)
+		return user.getConnections();
+		else return null;
+		
 	}
 
 	

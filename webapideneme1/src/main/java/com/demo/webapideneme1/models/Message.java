@@ -3,6 +3,7 @@ package com.demo.webapideneme1.models;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
@@ -14,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id",scope=Message.class)
 @Entity
 public class Message {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;

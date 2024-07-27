@@ -56,6 +56,12 @@ public class UserController {
 		return result;
 	}
 	
+	@GetMapping("/getconnectionsofauser")
+	public List<User> getConnectionsOfAUser(Long userId)
+	{
+		return userService.getConnectionsOfAUser(userId);
+	}
+	
 	@GetMapping("/getbannedusersofauser")
 	public List<User> getBannedUsersOfAUser(Long userId)
 	{

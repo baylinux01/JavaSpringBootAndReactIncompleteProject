@@ -40,6 +40,7 @@ public class ConnectionRequestService {
 		if(connectionRequestReceiver.getConnections().contains(connectionRequestSender)
 				||connectionRequestSender.getConnections().contains(connectionRequestReceiver))
 			return "there is already a connection between these two users";
+		if(connectionRequestSender==connectionRequestReceiver) return "sender and receiver is the same";
 		if(allConReqs!=null&&allConReqs.size()>0)
 		{
 			for(ConnectionRequest conReq:allConReqs)

@@ -19,10 +19,11 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id",scope=User.class)
+@JsonIdentityInfo
+(generator=ObjectIdGenerators.PropertyGenerator.class, property="id",scope=User.class)
 @Entity
 public class User {
-
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
@@ -35,14 +36,10 @@ public class User {
 	@Lob
 	private byte[] userImage;
 	private Date birthDate;
-	@OneToMany(fetch=FetchType.EAGER)
-	private List<Comment> comments;
-	@ManyToMany(fetch=FetchType.EAGER)
-	private List<Group> memberedGroups;
-	@OneToMany(fetch=FetchType.EAGER)
-	private List<Group> ownedGroups;
+	@JsonIgnore
 	@ManyToMany
 	private List<User> bannedUsers;
+	@JsonIgnore
 	@ManyToMany
 	private List<User> connections;
 	
@@ -88,24 +85,6 @@ public class User {
 	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
 	}
-	public List<Comment> getComments() {
-		return comments;
-	}
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
-	public List<Group> getMemberedGroups() {
-		return memberedGroups;
-	}
-	public void setMemberedGroups(List<Group> memberedGroups) {
-		this.memberedGroups = memberedGroups;
-	}
-	public List<Group> getOwnedGroups() {
-		return ownedGroups;
-	}
-	public void setOwnedGroups(List<Group> ownedGroups) {
-		this.ownedGroups = ownedGroups;
-	}
 	public List<User> getBannedUsers() {
 		return bannedUsers;
 	}
@@ -118,7 +97,6 @@ public class User {
 	public void setConnections(List<User> connections) {
 		this.connections = connections;
 	}
-	
 	
 	
 
