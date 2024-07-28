@@ -35,7 +35,7 @@ public class UserController {
 	
 	
 	
-	@PostMapping("/deleteconnection")
+	@DeleteMapping("/deleteconnection")
 	public String deleteConnection(Long deletingUserId,Long userToBeDeletedId) 
 	{
 		String result=userService.deleteConnection(deletingUserId,userToBeDeletedId);

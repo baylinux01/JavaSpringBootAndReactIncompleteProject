@@ -32,6 +32,7 @@ public class Comment {
 	@ManyToOne
 	private Group group;
 	
+	
 	public Comment() {
 		super();
 		// TODO Auto-generated constructor stub

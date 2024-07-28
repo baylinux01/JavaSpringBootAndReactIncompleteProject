@@ -25,7 +25,9 @@ public class Message {
 	
 	@ManyToOne
 	private User messageReceiver;
+	//@JsonFormat(shape=JsonFormat.Shape.STRING,pattern="dd-MM-yyyy")
 	private Date messageDate=new Date();
+	//@JsonFormat(shape=JsonFormat.Shape.STRING,pattern="dd-MM-yyyy")
 	private Date messageEditDate=new Date();
 	private String messageContent;
 	
