@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.controllers;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +119,7 @@ public class CommentController {
 		if(comment!=null)
 		{
 			comment.setContent(newcontent);
+			comment.setCommentEditDate(new Date());
 			String result=commentService.saveComment(comment);
 			
 			return "Comment succesfully updated";
