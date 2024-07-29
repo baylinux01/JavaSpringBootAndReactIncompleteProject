@@ -16,7 +16,15 @@ public interface UserRepository extends JpaRepository<User,Long>{
 
 	User findByUsername(String username);
 
-	@Query(value="SELECT * FROM user u WHERE u.name LIKE %:string% OR u.surname LIKE %:string%",nativeQuery=true)
+//	@Query(value=
+//	"SELECT * FROM user u WHERE u.name LIKE %:string% OR u.surname LIKE %:string%"
+//	,nativeQuery=true)
+	@Query(value=
+	"SELECT * FROM user u WHERE lower(u.name) "
+	+ "LIKE lower(concat(\"%\",:string,\"%\")) "
+	+ "OR lower(u.surname) "
+	+ "LIKE lower(concat(\"%\",:string,\"%\"))"
+			,nativeQuery=true)
 	List<User> getSearchedUsers(String string);
 
 	
