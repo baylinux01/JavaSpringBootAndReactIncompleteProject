@@ -98,66 +98,14 @@ public class UserController {
 		User user=userService.getOneUserByUsername(username);
 		return user;
 	}
-	@PostMapping("/adduser")
-	public  String addUser(String name, String surname, String username,  
+	@PostMapping("/createuser")
+	public  String createUser(String name, String surname, String username,  
 			String password, MultipartFile userimage, String birthdate) throws IOException 
 	{
-		User user=new User();
-		user.setName(name);
-		user.setSurname(surname);
-		user.setUsername(username);
-		user.setPassword(password);
 		
-		int day=0;
-		int month=0;
-		int year=0000;
-		System.out.println(birthdate);
-		if(birthdate!=null && !birthdate.equals(""))
-		{
-			if(birthdate.matches("^(19|20)\\d\\d\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"))
-			{
-			
-			String[] arr=new String[3];
-			arr=birthdate.split("-");
-			year=Integer.valueOf(arr[0]);
-			month=Integer.valueOf(arr[1]);
-			day=Integer.valueOf(arr[2]);
-			Date dateuserentered;
-			Date currentdate;
-		if((month==2||month==4||month==6||month==9||month==11)&&day==31)
-		{
-			user.setBirthDate(null);
-		}
-		else if(month==2 && day==30)
-		{
-			user.setBirthDate(null);
-		}
-		else if(month==2 && day==29 && year%4!=0)
-		{
-			user.setBirthDate(null);
-		}
-		else
-		{
 		
-		LocalDate localDate=LocalDate.of(year, month, day);
-		//user.setBirthDate(new Date());
-		dateuserentered=Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		currentdate=new Date();
-			if(dateuserentered.after(currentdate))
-			{
-				user.setBirthDate(null);
-			}
-			else user.setBirthDate(dateuserentered);
-		}
-		}}else user.setBirthDate(null);
-		if(userimage!=null&&userimage.getContentType()!=null) 
-		{
-			if(!userimage.getContentType().equals("image/jpeg")&&!userimage.getContentType().equals("image/png")) 
-			return "Image file is not suitable to the format. Please load a jpeg or png file";
-			else user.setUserImage(userimage.getBytes());
-		}
-		
-		String result=userService.saveUser(user);
+		String result=userService.createUser( name,surname,username,  
+				password, userimage,birthdate);
 		return result;
 		
 		
@@ -193,16 +141,12 @@ public class UserController {
 	}
 	
 	@PutMapping("/changeuserpassword")
-	public String changeUserPassword(long userId, String newpassword)
+	public String changeUserPassword(long userId, String newPassword)
 	{
-		User user=userService.getOneUserById(userId);
-		if(!newpassword.matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) return "New password is not suitable to the format.";
-		if(user!=null)
-		{
-			user.setPassword(newpassword);
-			userService.saveUser(user);
-			return "Password change is successful";
-		}else return "User not found";
+		
+		String result=userService.changeUserPassword(userId,newPassword);
+			return result;
+		
 	}
 	
 

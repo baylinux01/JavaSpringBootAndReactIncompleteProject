@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,9 +30,10 @@ import com.demo.webapideneme1.repositories.UserRepository;
 @Service
 public class UserService {
 	
-	UserRepository userRepository;
-	ConnectionRequestService connectionRequestService;
+	private UserRepository userRepository;
+	private ConnectionRequestService connectionRequestService;
 	
+	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
 	
 	@Autowired
 	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService) {
@@ -335,6 +337,96 @@ public class UserService {
 		if(user!=null&&user.getConnections()!=null)
 		return user.getConnections();
 		else return null;
+		
+	}
+
+	public String createUser(String name, String surname, String username, String password, MultipartFile userimage,
+			String birthdate) throws IOException {
+		User user=new User();
+		user.setName(name);
+		user.setSurname(surname);
+		user.setUsername(username);
+		user.setPassword(password);
+		//password will be encoded before user is saved.(look end of the method).
+		
+		int day=0;
+		int month=0;
+		int year=0000;
+		System.out.println(birthdate);
+		if(birthdate!=null && !birthdate.equals(""))
+		{
+			if(birthdate.matches("^(19|20)\\d\\d\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"))
+			{
+			
+			String[] arr=new String[3];
+			arr=birthdate.split("-");
+			year=Integer.valueOf(arr[0]);
+			month=Integer.valueOf(arr[1]);
+			day=Integer.valueOf(arr[2]);
+			Date dateuserentered;
+			Date currentdate;
+		if((month==2||month==4||month==6||month==9||month==11)&&day==31)
+		{
+			user.setBirthDate(null);
+		}
+		else if(month==2 && day==30)
+		{
+			user.setBirthDate(null);
+		}
+		else if(month==2 && day==29 && year%4!=0)
+		{
+			user.setBirthDate(null);
+		}
+		else
+		{
+		
+		LocalDate localDate=LocalDate.of(year, month, day);
+		//user.setBirthDate(new Date());
+		dateuserentered=Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		currentdate=new Date();
+			if(dateuserentered.after(currentdate))
+			{
+				user.setBirthDate(null);
+			}
+			else user.setBirthDate(dateuserentered);
+		}
+		}}else user.setBirthDate(null);
+		if(userimage!=null&&userimage.getContentType()!=null) 
+		{
+			if(!userimage.getContentType().equals("image/jpeg")&&!userimage.getContentType().equals("image/png")) 
+			return "Image file is not suitable to the format. Please load a jpeg or png file";
+			else user.setUserImage(userimage.getBytes());
+		}
+		if(user.getName()==null||user.getName().equals("")) return "Registration is unsuccessful name cannot be null";
+		if(user.getSurname()==null||user.getSurname().equals("")) return "Registration is unsuccessful surname cannot be null";
+		if(user.getUsername()==null||user.getUsername().equals("")) return "Registration is unsuccessful username cannot be null";
+		if(user.getPassword()==null||user.getPassword().equals("")) return "Registration is unsuccessful password cannot be null";
+		if(!user.getName().matches("^[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{2,20}(\\s[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{2,20})?$")) return "Name is not suitable to the format. Registration is unsuccessful";
+		if(!user.getSurname().matches("^[öüÖÜĞğşŞçÇıİa-zA-Z]{2,20}$")) return "Surnam)e is not suitable to the format. Registration is unsuccessful";
+		if(!user.getUsername().matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) return "Username is not suitable to the format. Registration is unsuccessful";
+		if(!user.getPassword().matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) return "Password is not suitable to the format. Registration is unsuccessful";
+		
+		
+		List<User> users= userRepository.findAll();
+		
+		for(User u : users)
+		{
+			if(user.getUsername().equals(u.getUsername())) return "Username cannot be the same as another one. Registration is unsuccessful";
+		}
+		user.setPassword(bCPE.encode(user.getPassword()));
+		userRepository.save(user);
+		return "Registration is successful";
+	}
+
+	public String changeUserPassword(long userId, String newPassword) {
+		User user=userRepository.findById(userId).orElse(null);
+		if(!newPassword.matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) return "New password is not suitable to the format.";
+		if(user!=null)
+		{
+			user.setPassword(bCPE.encode(newPassword));
+			userRepository.save(user);
+			return "success";
+		}else return "User not found";
 		
 	}
 
