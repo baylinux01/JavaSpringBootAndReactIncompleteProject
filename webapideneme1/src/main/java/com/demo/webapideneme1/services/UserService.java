@@ -18,6 +18,7 @@ import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.demo.webapideneme1.models.ConnectionRequest;
@@ -227,7 +228,7 @@ public class UserService {
 		return user.getBannedUsers();
 		else return null;
 	}
-
+	@Transactional
 	public String banUser(Long banningUserId, Long userToBeBannedId) {
 		
 		User banningUser=userRepository.findById(banningUserId).orElse(null);
@@ -271,7 +272,7 @@ public class UserService {
 		
 		return "false";
 	}
-
+	@Transactional
 	public String acceptConnection(Long acceptingUserId, Long userToBeAcceptedId) {
 		User acceptingUser=userRepository.findById(acceptingUserId).orElse(null);
 		User userToBeAccepted=userRepository.findById(userToBeAcceptedId).orElse(null);
@@ -308,7 +309,7 @@ public class UserService {
 		
 		
 	}
-
+	@Transactional
 	public String deleteConnection(Long deletingUserId, Long userToBeDeletedId) {
 		User deletingUser=userRepository.findById(deletingUserId).orElse(null);
 		User userToBeDeleted=userRepository.findById(userToBeDeletedId).orElse(null);

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.demo.webapideneme1.models.Comment;
 import com.demo.webapideneme1.models.Group;
@@ -48,7 +49,7 @@ public class GroupService {
 		
 		return groups;
 	}
-
+	@Transactional
 	public void deleteGroupById(Group group) {
 		List<Comment> comments=commentService.getCommentsOfAGroup(group.getId());
 		while(comments.size()>0)
