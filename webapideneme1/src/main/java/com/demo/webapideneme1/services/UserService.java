@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +35,26 @@ public class UserService {
 	
 	private UserRepository userRepository;
 	private ConnectionRequestService connectionRequestService;
+	private AuthenticationManager authenticationManager;
 	
 	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
 	
+	
+	
+
+	
 	@Autowired
-	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService) {
+	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService,
+			AuthenticationManager authenticationManager) {
 		super();
 		this.userRepository = userRepository;
 		this.connectionRequestService = connectionRequestService;
+		this.authenticationManager = authenticationManager;
 	}
+
+
+
+
 
 	public String saveUser(User user) {
 		if(user.getName()==null||user.getName().equals("")) return "Registration is unsuccessful name cannot be null";
@@ -64,6 +78,10 @@ public class UserService {
 		return "Registration is successful";
 		
 	}
+
+	
+
+	
 
 	public String updateUser
 	(long id, String newname, String newsurname, String newusername,
@@ -166,15 +184,21 @@ public class UserService {
 	}
 
 	public boolean enterUser(String username, String password) {
-		List<User> users= userRepository.findAll();
-		for(User u : users)
-		{
-			if( u.getUsername().equals(username) && u.getPassword().equals(password))
-			{
-				return true;
-			}
-		}
+		Authentication authentication =authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+		if(authentication.isAuthenticated()) 
+		return true;
+		else 
 		return false;
+//		List<User> users= userRepository.findAll();
+//		for(User u : users)
+//		{
+//			if( u.getUsername().equals(username) && u.getPassword().equals(password))
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
 	}
 
 	public List<User> getSearchedUsers(String searchedWords) {
