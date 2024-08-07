@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.controllers;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.services.UserService;
+
+import io.jsonwebtoken.security.InvalidKeyException;
 @CrossOrigin
 @RestController
 @RequestMapping("/users")
@@ -111,13 +114,10 @@ public class UserController {
 		
 	}
 	@PostMapping("/enteruser")
-	public User enterUser(String username,String password) 
+	public String enterUser(String username,String password) throws InvalidKeyException, NoSuchAlgorithmException 
 	{
-		User user=userService.getOneUserByUsername(username);
-		if(user==null) return null;
-		boolean result= userService.enterUser(username,password);
-		if(result==true) return user;
-		else return null;
+		return userService.enterUser(username,password);
+		
 	}
 	@PostMapping("/exituser")
 	public User exitUser()

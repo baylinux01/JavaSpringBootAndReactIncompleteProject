@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.services;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import com.demo.webapideneme1.models.ConnectionRequest;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.repositories.UserRepository;
 
+import io.jsonwebtoken.security.InvalidKeyException;
+
 
 @Service
 public class UserService {
@@ -36,20 +39,18 @@ public class UserService {
 	private UserRepository userRepository;
 	private ConnectionRequestService connectionRequestService;
 	private AuthenticationManager authenticationManager;
-	
+	private JWTService jwtService;
 	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
 	
 	
-	
-
-	
 	@Autowired
 	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService,
-			AuthenticationManager authenticationManager) {
+			AuthenticationManager authenticationManager, JWTService jwtService) {
 		super();
 		this.userRepository = userRepository;
 		this.connectionRequestService = connectionRequestService;
 		this.authenticationManager = authenticationManager;
+		this.jwtService = jwtService;
 	}
 
 
@@ -183,13 +184,12 @@ public class UserService {
 		return user;
 	}
 
-	public boolean enterUser(String username, String password) {
+	public String enterUser(String username, String password) throws InvalidKeyException, NoSuchAlgorithmException {
 		Authentication authentication =authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username,password));
 		if(authentication.isAuthenticated()) 
-		return true;
-		else 
-		return false;
+		return jwtService.generateToken(username);
+		else return null;
 //		List<User> users= userRepository.findAll();
 //		for(User u : users)
 //		{

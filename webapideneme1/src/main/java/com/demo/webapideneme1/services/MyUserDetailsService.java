@@ -8,22 +8,23 @@ import org.springframework.stereotype.Service;
 
 import com.demo.webapideneme1.models.MyUserDetails;
 import com.demo.webapideneme1.models.User;
+import com.demo.webapideneme1.repositories.UserRepository;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-	private UserService userService;
-	
+	private UserRepository userRepository;
+
 	@Autowired
-	public MyUserDetailsService(UserService userService) {
+	public MyUserDetailsService(UserRepository userRepository) {
 		super();
-		this.userService = userService;
+		this.userRepository = userRepository;
 	}
 
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user= userService.getOneUserByUsername(username);
+		User user= userRepository.findByUsername(username);
 		if(user==null)
 		{
 			System.out.println("user not found");
