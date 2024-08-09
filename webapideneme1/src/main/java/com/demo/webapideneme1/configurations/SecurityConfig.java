@@ -15,18 +15,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.demo.webapideneme1.filters.JWTFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
 	
 	private UserDetailsService userDetailsService;
-	
+	private JWTFilter jWTFilter;
 	
 	@Autowired
-	public SecurityConfig(UserDetailsService userDetailsService) {
+	public SecurityConfig(UserDetailsService userDetailsService,JWTFilter jWTFilter) {
 		super();
 		this.userDetailsService = userDetailsService;
+		this.jWTFilter=jWTFilter;
 	}
 
 	@Bean
@@ -40,6 +44,7 @@ public class SecurityConfig{
 			  //.formLogin(Customizer.withDefaults())
 				.httpBasic(Customizer.withDefaults())
 				.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(jWTFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 				
 	}

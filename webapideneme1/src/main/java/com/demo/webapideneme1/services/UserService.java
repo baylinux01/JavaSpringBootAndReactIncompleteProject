@@ -39,18 +39,18 @@ public class UserService {
 	private UserRepository userRepository;
 	private ConnectionRequestService connectionRequestService;
 	private AuthenticationManager authenticationManager;
-	private JWTService jwtService;
+	private JWTService jWTService;
 	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
 	
 	
 	@Autowired
 	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService,
-			AuthenticationManager authenticationManager, JWTService jwtService) {
+			AuthenticationManager authenticationManager, JWTService jWTService) {
 		super();
 		this.userRepository = userRepository;
 		this.connectionRequestService = connectionRequestService;
 		this.authenticationManager = authenticationManager;
-		this.jwtService = jwtService;
+		this.jWTService = jWTService;
 	}
 
 
@@ -188,7 +188,7 @@ public class UserService {
 		Authentication authentication =authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username,password));
 		if(authentication.isAuthenticated()) 
-		return jwtService.generateToken(username);
+		return jWTService.generateToken(username);
 		else return null;
 //		List<User> users= userRepository.findAll();
 //		for(User u : users)
