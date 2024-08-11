@@ -10,11 +10,13 @@ import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
@@ -22,7 +24,11 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
-	
+//	@Value("${app.secret}")
+//	private String APP_SECRET;
+
+	@Value("${expires.in}")
+	private Long EXPIRES_IN;
 	
 	private static Key getKey() throws NoSuchAlgorithmException {
 		String secretKey="";
@@ -45,19 +51,20 @@ public class JWTService {
 				.add(claims)
 				.subject(username)
 				.issuedAt(new Date(new Date().getTime()))
-				.expiration(new Date(System.currentTimeMillis()+60*60*30))
+				.expiration(new Date(System.currentTimeMillis()+EXPIRES_IN))
 				.and()
 				.signWith(getKey())
 				.compact();
 	}
-
+	
+	
 	public String extractUsername(String token) {
 		
 		return null;
 	}
 
 	public boolean validateToken(String token, UserDetails userDetails) {
-		// TODO Auto-generated method stub
+		
 		return false;
 		
 	}

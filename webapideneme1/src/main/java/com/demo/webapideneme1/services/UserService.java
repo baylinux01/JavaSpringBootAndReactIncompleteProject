@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -372,6 +374,12 @@ public class UserService {
 		user.setUsername(username);
 		user.setPassword(password);
 		//password will be encoded before user is saved.(look end of the method).
+		List<GrantedAuthority> authorities=new ArrayList<GrantedAuthority>();
+		authorities.add(new SimpleGrantedAuthority("USER"));
+		user.setAuthorities(authorities);
+		//user.setAuthorities(Collections.singleton(new SimpleGrantedAuthority("USER")));
+		//user.setAuthorities(List.of(new SimpleGrantedAuthority("USER")));
+		
 		
 		int day=0;
 		int month=0;
