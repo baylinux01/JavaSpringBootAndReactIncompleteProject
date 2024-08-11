@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.InvalidKeyException;
@@ -21,6 +22,8 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
+	
+	
 	private static Key getKey() throws NoSuchAlgorithmException {
 		String secretKey="";
 		KeyGenerator keyGen=KeyGenerator.getInstance("HmacSHA256");
@@ -56,7 +59,11 @@ public class JWTService {
 	public boolean validateToken(String token, UserDetails userDetails) {
 		// TODO Auto-generated method stub
 		return false;
+		
 	}
-	
+	private Claims extractAllClaims(String token) 
+	{
+		return null;
+	}
 
 }

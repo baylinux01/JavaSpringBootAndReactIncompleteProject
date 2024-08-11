@@ -2,6 +2,7 @@ package com.demo.webapideneme1.models;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,8 +20,8 @@ public class MyUserDetails implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return Collections.singleton(new SimpleGrantedAuthority("USER"));
+		//return Collections.singleton(new SimpleGrantedAuthority("USER"));
+		return List.of(new SimpleGrantedAuthority("USER"));
 	}
 
 	@Override
