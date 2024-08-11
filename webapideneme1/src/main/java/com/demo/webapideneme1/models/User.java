@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -34,10 +35,11 @@ public class User {
 	private long id;
 	private String name;
 	private String surname;
-	@Column(unique=true)
+	@Column(unique=true,nullable=false)
 	private String username;
 	@JsonIgnore
 	//@JsonProperty(access=Access.WRITE_ONLY)
+	@Column(nullable=false)
 	private String password;
 	@Lob
 	private byte[] userImage;
