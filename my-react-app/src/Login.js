@@ -33,8 +33,10 @@ export default function Login({signupformsubmitresult,setSignupformsubmitresult,
      axios.post("/users/enteruser",qs.stringify({username:username,password:password}))
      .then((response)=>
       {
-      setUser((user)=>({...response.data}));
-      console.log(user);
+      localStorage.setItem("token",response.data.token);
+      localStorage.setItem("username",response.data.username);
+      localStorage.setItem("id",response.data.id);
+      console.log(localStorage.getItem("id"));
       if(Object.keys(response.data).length !==0 ){navigate("/");}
       if(Object.keys(response.data).length ===0 )
       {setUnsuccessfulsignin(true); setSignupformsubmitresult("");}

@@ -11,28 +11,26 @@ export default function Home(
   ) {
   
 
-  // function fetchGroups(){
-  //   axios.defaults.baseURL="http://localhost:8083";
-  //   axios.get("/groups/getallgroups").then((response)=>
-  //     {setGroups([...response.data]);});
-  // }
-
-  // function fetchUser(){
-  //   axios.defaults.baseURL="http://localhost:8083";
-  //   axios.get("/users/getoneuserbyid",{params:{userId:user.id}})
-  //   .then((response)=>{setUser({...response.data})});
-  // }
   function fetchGroups(){
     axios.defaults.baseURL="http://localhost:8083";
     axios.get("/groups/getallgroups").then((response)=>
       {setGroups([...response.data]);});
   }
+
+  function fetchUser(){
+    axios.defaults.baseURL="http://localhost:8083";
+    
+    axios.get("/users/getoneuserbyid",{params:{userId:localStorage.getItem("id")}})
+    .then((response)=>{setUser({...response.data})});
+  }
+  
   
   useEffect(()=>{
     
-    
-    fetchGroups();
-    
+    if(localStorage.getItem("id")!=null)
+    {
+      fetchUser();
+    }
   },[]);
 
 

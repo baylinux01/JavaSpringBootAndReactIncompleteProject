@@ -49,11 +49,11 @@ function App() {
   }
 
  
-    useEffect(()=> {
+    // useEffect(()=> {
       
       
 
-      fetchGroups();},[groups])
+    //   fetchGroups();},[groups])
 
 
   return (
