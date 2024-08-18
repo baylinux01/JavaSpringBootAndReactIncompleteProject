@@ -32,5 +32,16 @@ public class MyUserDetailsService implements UserDetailsService {
 		}
 		return new MyUserDetails(user);
 	}
+	
+	public UserDetails loadUserById(long id)
+	{
+		User user=userRepository.findById(id).orElse(null);
+		if(user==null)
+		{
+			System.out.println("user not found");
+			throw new UsernameNotFoundException("User not found");
+		}
+		return new MyUserDetails(user);
+	}
 
 }

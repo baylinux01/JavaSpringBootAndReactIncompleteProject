@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.demo.webapideneme1.models.Dto;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.services.UserService;
 
@@ -114,7 +116,7 @@ public class UserController {
 		
 	}
 	@PostMapping("/enteruser")
-	public String enterUser(String username,String password) throws InvalidKeyException, NoSuchAlgorithmException 
+	public Dto enterUser(String username,String password) throws InvalidKeyException, NoSuchAlgorithmException 
 	{
 		return userService.enterUser(username,password);
 		

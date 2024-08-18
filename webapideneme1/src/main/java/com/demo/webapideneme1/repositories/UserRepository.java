@@ -27,6 +27,11 @@ public interface UserRepository extends JpaRepository<User,Long>{
 			,nativeQuery=true)
 	List<User> getSearchedUsers(String string);
 
+	@Query
+	(value = "select * from user where username=:username and password=:password",
+	nativeQuery = true)
+	User findByUsernameAndPassword(String username, String password);
+
 	
 
 

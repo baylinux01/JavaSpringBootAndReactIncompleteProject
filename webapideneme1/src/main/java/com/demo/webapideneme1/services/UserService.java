@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.demo.webapideneme1.models.ConnectionRequest;
+import com.demo.webapideneme1.models.Dto;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.repositories.UserRepository;
 
@@ -186,11 +187,23 @@ public class UserService {
 		return user;
 	}
 
-	public String enterUser(String username, String password) throws InvalidKeyException, NoSuchAlgorithmException {
+	public Dto enterUser(String username, String password) throws InvalidKeyException, NoSuchAlgorithmException {
 		Authentication authentication =authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username,password));
 		if(authentication.isAuthenticated()) 
-		return jWTService.generateToken(username);
+		{
+			String token=jWTService.generateToken(username);
+			User user=userRepository.findByUsername(username);
+			if(user!=null)
+			{
+				Dto dto=new Dto();
+				dto.setToken(token);
+				dto.setId(user.getId());
+				dto.setUsername(user.getUsername());
+				return dto;
+			}return null;
+			
+		}
 		else return null;
 //		List<User> users= userRepository.findAll();
 //		for(User u : users)
