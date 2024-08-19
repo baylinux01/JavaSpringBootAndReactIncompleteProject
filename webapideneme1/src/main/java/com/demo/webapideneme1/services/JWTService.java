@@ -45,7 +45,7 @@ public class JWTService {
 		
 		Map<String,Object> claims=new HashMap();
 		
-		return Jwts
+		return "Bearer "+Jwts
 				.builder()
 				.claims()
 				.add(claims)
