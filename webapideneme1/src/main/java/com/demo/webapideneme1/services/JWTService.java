@@ -2,6 +2,7 @@ package com.demo.webapideneme1.services;
 
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -29,23 +31,48 @@ public class JWTService {
 
 	@Value("${expires.in}")
 	private Long EXPIRES_IN;
+	//@Value("${secret}")
+	//private static String SECRET;
+	private static SecretKey sk;
 	
-	private static Key getKey() throws NoSuchAlgorithmException {
+	
+	public static SecretKey getSk() {
+		return sk;
+	}
+
+	public static void setSk(SecretKey sk) {
+		JWTService.sk = sk;
+	}
+
+	private static SecretKey generateSecretKey() throws NoSuchAlgorithmException {
 		String secretKey="";
 		KeyGenerator keyGen=KeyGenerator.getInstance("HmacSHA256");
-		SecretKey sk=keyGen.generateKey();
-		secretKey=Base64.getEncoder().encodeToString(sk.getEncoded());
-		byte[] keyBytes=Decoders.BASE64.decode(secretKey);
-		return Keys.hmacShaKeyFor(keyBytes);
+		//SecretKey 
+		sk=keyGen.generateKey();
+		return sk;
+		
+//		byte[] decodedKey=Base64.getDecoder().decode(SECRET);
+//		return Keys.hmacShaKeyFor(decodedKey);
 	
 	}
+	
+//	private static Key getKey() throws NoSuchAlgorithmException {
+//		String secretKey="";
+//		KeyGenerator keyGen=KeyGenerator.getInstance("HmacSHA256");
+//		SecretKey sk=keyGen.generateKey();
+//		secretKey=Base64.getEncoder().encodeToString(sk.getEncoded());
+//		byte[] keyBytes=Decoders.BASE64.decode(secretKey);
+//		return Keys.hmacShaKeyFor(keyBytes);
+//	
+//	}
 	
 	public String generateToken(String username) throws InvalidKeyException, NoSuchAlgorithmException {
 		
 		
 		Map<String,Object> claims=new HashMap();
 		
-		return "Bearer "+Jwts
+		return //"Bearer "+
+				Jwts
 				.builder()
 				.claims()
 				.add(claims)
@@ -53,24 +80,31 @@ public class JWTService {
 				.issuedAt(new Date(new Date().getTime()))
 				.expiration(new Date(System.currentTimeMillis()+EXPIRES_IN))
 				.and()
-				.signWith(getKey())
+				.signWith(generateSecretKey())
 				.compact();
 	}
 	
+	private Claims getClaims(String jwt) throws JwtException, IllegalArgumentException, NoSuchAlgorithmException
+	{
+		return Jwts.parser()
+				.verifyWith(sk)
+				.build()
+				.parseSignedClaims(jwt)
+				.getPayload();
+	}
 	
-	public String extractUsername(String token) {
+	public String extractUsername(String jwt) throws JwtException, IllegalArgumentException, NoSuchAlgorithmException {
 		
-		return null;
+		Claims claims=getClaims(jwt);
+		return claims.getSubject();
 	}
 
-	public boolean validateToken(String token, UserDetails userDetails) {
+	public boolean isTokenValid(String jwt, UserDetails userDetails) throws JwtException, IllegalArgumentException, NoSuchAlgorithmException {
 		
-		return false;
+		Claims claims=getClaims(jwt);
+		return claims.getExpiration().after(Date.from(Instant.now()));
 		
 	}
-	private Claims extractAllClaims(String token) 
-	{
-		return null;
-	}
+	
 
 }

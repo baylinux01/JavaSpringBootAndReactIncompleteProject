@@ -122,9 +122,9 @@ public class UserController {
 		
 	}
 	@PostMapping("/exituser")
-	public User exitUser()
+	public void exitUser()
 	{
-		return null;
+		userService.exitUser();
 	}
 	@PutMapping("/updateuser")
 	public String updateUser

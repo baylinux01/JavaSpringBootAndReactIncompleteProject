@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.filters;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.demo.webapideneme1.services.JWTService;
 import com.demo.webapideneme1.services.MyUserDetailsService;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,19 +55,29 @@ public class JWTFilter extends OncePerRequestFilter{
 		{
 			//token=authHeader.substring("Bearer ".length());
 			token=authHeader.substring(7);
-			username=jWTService.extractUsername(token);
+			try {
+				username=jWTService.extractUsername(token);
+			} catch (JwtException | IllegalArgumentException | NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null)
 		{
 			//UserDetails userDetails=applicationContext.getBean(MyUserDetailsService.class).loadUserByUsername(username);
 			UserDetails userDetails=myUserDetailsService.loadUserByUsername(username);
-			if(jWTService.validateToken(token,userDetails))
-			{
-				UsernamePasswordAuthenticationToken authToken= 
-						new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authToken);
+			try {
+				if(jWTService.isTokenValid(token,userDetails))
+				{
+					UsernamePasswordAuthenticationToken authToken= 
+							new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authToken);
+				}
+			} catch (JwtException | IllegalArgumentException | NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		filterChain.doFilter(request,response);

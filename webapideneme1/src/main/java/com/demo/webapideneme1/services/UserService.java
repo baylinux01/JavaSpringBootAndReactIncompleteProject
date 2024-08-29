@@ -124,7 +124,8 @@ public class UserService {
 				
 			}
 			LocalDate localDate=LocalDate.of(year, month, day);
-			newbirthdate2 = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			//newbirthdate2 = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			newbirthdate2=java.sql.Date.valueOf(localDate);
 		}
 		
 		if(!newname2.matches("^[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{2,20}(\\s[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{2,20})?$")) return "Name is not suitable to the format. Update is unsuccessful";
@@ -427,7 +428,8 @@ public class UserService {
 		
 		LocalDate localDate=LocalDate.of(year, month, day);
 		//user.setBirthDate(new Date());
-		dateuserentered=Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		//dateuserentered=Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		dateuserentered=java.sql.Date.valueOf(localDate);
 		currentdate=new Date();
 			if(dateuserentered.after(currentdate))
 			{
@@ -472,6 +474,15 @@ public class UserService {
 			userRepository.save(user);
 			return "success";
 		}else return "User not found";
+		
+	}
+
+
+
+
+
+	public void exitUser() {
+		JWTService.setSk(null);
 		
 	}
 

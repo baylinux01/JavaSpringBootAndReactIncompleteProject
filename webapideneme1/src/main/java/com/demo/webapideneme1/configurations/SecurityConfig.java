@@ -40,6 +40,7 @@ public class SecurityConfig{
 				.csrf(customizer->customizer.disable())
 				.authorizeHttpRequests(req->req
 						.requestMatchers("users/createuser","users/enteruser").permitAll()
+						//.requestMatchers("/users/**").hasRole("USER")
 						.anyRequest().authenticated())
 			  //.formLogin(Customizer.withDefaults())
 				.httpBasic(Customizer.withDefaults())
