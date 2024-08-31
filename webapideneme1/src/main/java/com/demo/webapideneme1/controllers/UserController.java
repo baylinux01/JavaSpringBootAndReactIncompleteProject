@@ -26,6 +26,7 @@ import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.services.UserService;
 
 import io.jsonwebtoken.security.InvalidKeyException;
+import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin
 @RestController
 @RequestMapping("/users")
@@ -122,9 +123,9 @@ public class UserController {
 		
 	}
 	@PostMapping("/exituser")
-	public void exitUser()
+	public void exitUser(HttpServletRequest request,String username)
 	{
-		userService.exitUser();
+		
 	}
 	@PutMapping("/updateuser")
 	public String updateUser

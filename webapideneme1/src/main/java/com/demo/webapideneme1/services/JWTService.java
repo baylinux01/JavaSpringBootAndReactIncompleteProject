@@ -12,6 +12,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +37,7 @@ public class JWTService {
 	private static SecretKey sk;
 	
 	
-	public static SecretKey getSk() {
-		return sk;
-	}
-
-	public static void setSk(SecretKey sk) {
-		JWTService.sk = sk;
-	}
-
+	@Bean
 	private static SecretKey generateSecretKey() throws NoSuchAlgorithmException {
 		String secretKey="";
 		KeyGenerator keyGen=KeyGenerator.getInstance("HmacSHA256");
@@ -80,7 +74,7 @@ public class JWTService {
 				.issuedAt(new Date(new Date().getTime()))
 				.expiration(new Date(System.currentTimeMillis()+EXPIRES_IN))
 				.and()
-				.signWith(generateSecretKey())
+				.signWith(sk)//generateSecretKey())
 				.compact();
 	}
 	

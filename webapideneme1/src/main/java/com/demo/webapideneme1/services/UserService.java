@@ -481,10 +481,13 @@ public class UserService {
 
 
 
-	public void exitUser() {
-		JWTService.setSk(null);
-		
-	}
+	
+
+
+
+
+
+	
 
 	
 
