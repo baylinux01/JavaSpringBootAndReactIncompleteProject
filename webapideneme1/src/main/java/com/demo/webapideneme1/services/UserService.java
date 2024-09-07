@@ -24,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,17 +44,19 @@ public class UserService {
 	private ConnectionRequestService connectionRequestService;
 	private AuthenticationManager authenticationManager;
 	private JWTService jWTService;
-	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
+	private PasswordEncoder passwordEncoder;
+//	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
 	
 	
 	@Autowired
 	public UserService(UserRepository userRepository, ConnectionRequestService connectionRequestService,
-			AuthenticationManager authenticationManager, JWTService jWTService) {
+			AuthenticationManager authenticationManager, JWTService jWTService,PasswordEncoder passwordEncoder) {
 		super();
 		this.userRepository = userRepository;
 		this.connectionRequestService = connectionRequestService;
 		this.authenticationManager = authenticationManager;
 		this.jWTService = jWTService;
+		this.passwordEncoder=passwordEncoder;
 	}
 
 
@@ -460,7 +463,7 @@ public class UserService {
 		{
 			if(user.getUsername().equals(u.getUsername())) return "Username cannot be the same as another one. Registration is unsuccessful";
 		}
-		user.setPassword(bCPE.encode(user.getPassword()));
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
 		return "Registration is successful";
 	}
@@ -470,7 +473,7 @@ public class UserService {
 		if(!newPassword.matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) return "New password is not suitable to the format.";
 		if(user!=null)
 		{
-			user.setPassword(bCPE.encode(newPassword));
+			user.setPassword(passwordEncoder.encode(newPassword));
 			userRepository.save(user);
 			return "success";
 		}else return "User not found";
