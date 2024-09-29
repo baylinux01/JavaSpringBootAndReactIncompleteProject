@@ -47,13 +47,14 @@ public class SecurityConfig{
 		return http
 				.csrf(customizer->customizer.disable())
 				.authorizeHttpRequests(req->req
-						.requestMatchers("users/createuser","users/enteruser").permitAll()
+						.requestMatchers("users/createuser","users/enteruser",
+								"users/getallusers","groups/getallgroups").permitAll()
 						//.requestMatchers("/users/**").hasRole("USER")
 						.anyRequest().authenticated())
 			  //.formLogin(Customizer.withDefaults())
 				.httpBasic(Customizer.withDefaults())
 				.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(jWTFilter, UsernamePasswordAuthenticationFilter.class)
+				//.addFilterBefore(jWTFilter, UsernamePasswordAuthenticationFilter.class)
 				.cors(httpSecurityCorsConfigurer->
 				{
 					CorsConfiguration configuration=new CorsConfiguration();

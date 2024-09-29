@@ -2,6 +2,7 @@ package com.demo.webapideneme1.services;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.repositories.UserRepository;
 
 import io.jsonwebtoken.security.InvalidKeyException;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @Service
@@ -43,7 +45,7 @@ public class UserService {
 	private UserRepository userRepository;
 	private ConnectionRequestService connectionRequestService;
 	private AuthenticationManager authenticationManager;
-	private JWTService jWTService;
+	//private JWTService jWTService;
 	private PasswordEncoder passwordEncoder;
 //	private BCryptPasswordEncoder bCPE=new BCryptPasswordEncoder(12);
 	
@@ -55,7 +57,7 @@ public class UserService {
 		this.userRepository = userRepository;
 		this.connectionRequestService = connectionRequestService;
 		this.authenticationManager = authenticationManager;
-		this.jWTService = jWTService;
+		//this.jWTService = jWTService;
 		this.passwordEncoder=passwordEncoder;
 	}
 
@@ -91,27 +93,31 @@ public class UserService {
 	
 
 	public String updateUser
-	(long id, String newname, String newsurname, String newusername,
+	(HttpServletRequest request, String newname, String newsurname, String newusername,
 			MultipartFile newuserimage,String newbirthdate) 
 	throws IOException 
 	{
-		Optional<User> user=userRepository.findById(id);
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
 		List<User> users;
 		String newname2="";
 		String newsurname2="";
 		String newusername2="";
 		byte[] newuserimage2=null;
 		Date newbirthdate2;
-		if(user.isPresent())
+		if(user!=null)
 		{
 		
-		if(newname==null ||newname.equals(""))newname2=user.get().getName();
+		if(newname==null ||newname.equals(""))newname2=user.getName();
 		else newname2=newname;
-		if(newsurname==null||newsurname.equals(""))newsurname2=user.get().getSurname();
+		if(newsurname==null||newsurname.equals(""))newsurname2=user.getSurname();
 		else newsurname2=newsurname;
-		if(newusername==null||newusername.equals(""))newusername2=user.get().getUsername();
+		if(newusername==null||newusername.equals(""))newusername2=user.getUsername();
 		else newusername2=newusername;
-		if(newbirthdate==null || newbirthdate.equals("")) newbirthdate2=user.get().getBirthDate();
+		if(newbirthdate==null || newbirthdate.equals("")) newbirthdate2=user.getBirthDate();
 		else
 		{
 			int day=0;
@@ -143,22 +149,22 @@ public class UserService {
 		if(newuserimage==null||newuserimage.getContentType()==null
 			||(!newuserimage.getContentType().equals("image/jpeg")
 			&&!newuserimage.getContentType().equals("image/png"))) 
-			newuserimage2=user.get().getUserImage();
+			newuserimage2=user.getUserImage();
 		else newuserimage2=newuserimage.getBytes();
 		
 		users= userRepository.findAll();
-		users.remove(user.get());
+		users.remove(user);
 		for(User u : users)
 		{
 			if(newusername2.equals(u.getUsername())) return "Username cannot be the same as another one. Update is unsuccessful";
 		}
 		}else return "User not found. Update is unsuccessful";
-		user.get().setName(newname2);
-		user.get().setSurname(newsurname2);
-		user.get().setUsername(newusername2);
-		user.get().setUserImage(newuserimage2);
-		user.get().setBirthDate(newbirthdate2);
-		userRepository.save(user.get());
+		user.setName(newname2);
+		user.setSurname(newsurname2);
+		user.setUsername(newusername2);
+		user.setUserImage(newuserimage2);
+		user.setBirthDate(newbirthdate2);
+		userRepository.save(user);
 		return "Update is successful";
 	}
 
@@ -191,20 +197,17 @@ public class UserService {
 		return user;
 	}
 
-	public Dto enterUser(String username, String password) throws InvalidKeyException, NoSuchAlgorithmException {
+	public User enterUser(String username, String password) throws InvalidKeyException, NoSuchAlgorithmException {
 		Authentication authentication =authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username,password));
 		if(authentication.isAuthenticated()) 
 		{
-			String token=jWTService.generateToken(username);
+			//String token=jWTService.generateToken(username);
 			User user=userRepository.findByUsername(username);
 			if(user!=null)
 			{
-				Dto dto=new Dto();
-				dto.setToken(token);
-				dto.setId(user.getId());
-				dto.setUsername(user.getUsername());
-				return dto;
+				
+				return user;
 			}return null;
 			
 		}
@@ -267,16 +270,23 @@ public class UserService {
 		return sortedSearchedUsersList;
 	}
 
-	public List<User> getBannedUsersOfAUser(Long userId) {
-		User user=userRepository.findById(userId).orElse(null);
+	public List<User> getBannedUsersOfCurrentUser(HttpServletRequest request) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
 		if(user!=null&&user.getBannedUsers()!=null)
 		return user.getBannedUsers();
 		else return null;
 	}
 	@Transactional
-	public String banUser(Long banningUserId, Long userToBeBannedId) {
-		
-		User banningUser=userRepository.findById(banningUserId).orElse(null);
+	public String banUser(HttpServletRequest request, Long userToBeBannedId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User banningUser=userRepository.findByUsername(username);
 		User userToBeBanned=userRepository.findById(userToBeBannedId).orElse(null);
 		if(banningUser==userToBeBanned) return "false";
 		if(!banningUser.getBannedUsers().contains(userToBeBanned))
@@ -318,8 +328,12 @@ public class UserService {
 		return "false";
 	}
 	@Transactional
-	public String acceptConnection(Long acceptingUserId, Long userToBeAcceptedId) {
-		User acceptingUser=userRepository.findById(acceptingUserId).orElse(null);
+	public String acceptConnection(HttpServletRequest request, Long userToBeAcceptedId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User acceptingUser=userRepository.findByUsername(username);
 		User userToBeAccepted=userRepository.findById(userToBeAcceptedId).orElse(null);
 		List<ConnectionRequest> conreqs=
 				connectionRequestService.getAllConnectionRequests();
@@ -355,8 +369,12 @@ public class UserService {
 		
 	}
 	@Transactional
-	public String deleteConnection(Long deletingUserId, Long userToBeDeletedId) {
-		User deletingUser=userRepository.findById(deletingUserId).orElse(null);
+	public String deleteConnection( HttpServletRequest request,Long userToBeDeletedId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User deletingUser=userRepository.findByUsername(username);
 		User userToBeDeleted=userRepository.findById(userToBeDeletedId).orElse(null);
 		if(deletingUser!=null&&userToBeDeleted!=null)
 		{
@@ -391,9 +409,8 @@ public class UserService {
 		user.setUsername(username);
 		user.setPassword(password);
 		//password will be encoded before user is saved.(look end of the method).
-		List<GrantedAuthority> authorities=new ArrayList<GrantedAuthority>();
-		authorities.add(new SimpleGrantedAuthority("USER"));
-		user.setAuthorities(authorities);
+		
+		user.setRoles("USER");
 		//user.setAuthorities(Collections.singleton(new SimpleGrantedAuthority("USER")));
 		//user.setAuthorities(List.of(new SimpleGrantedAuthority("USER")));
 		
@@ -468,9 +485,14 @@ public class UserService {
 		return "Registration is successful";
 	}
 
-	public String changeUserPassword(long userId, String newPassword) {
-		User user=userRepository.findById(userId).orElse(null);
-		if(!newPassword.matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) return "New password is not suitable to the format.";
+	public String changeUserPassword(HttpServletRequest request,String newPassword) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
+		if(!newPassword.matches("^[öüÖÜĞğşŞçÇıİa-zA-Z0-9]{2,20}$")) 
+			return "New password is not suitable to the format.";
 		if(user!=null)
 		{
 			user.setPassword(passwordEncoder.encode(newPassword));

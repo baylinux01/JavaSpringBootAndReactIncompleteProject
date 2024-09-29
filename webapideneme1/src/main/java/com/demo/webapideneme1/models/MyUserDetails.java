@@ -1,5 +1,6 @@
 package com.demo.webapideneme1.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,13 @@ public class MyUserDetails implements UserDetails{
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		//return Collections.singleton(new SimpleGrantedAuthority("USER"));
 		//return List.of(new SimpleGrantedAuthority("USER"));
-		return user.getAuthorities();
+		String[] roles=user.getRoles().split("-");
+		List<GrantedAuthority> list=new ArrayList<GrantedAuthority>();
+		for(int i=0;i<roles.length;i++)
+		{
+			list.add(new SimpleGrantedAuthority(roles[i]));
+		}
+		return list;
 	}
 
 	@Override

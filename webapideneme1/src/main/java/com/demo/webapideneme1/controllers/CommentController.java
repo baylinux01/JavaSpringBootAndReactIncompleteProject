@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.controllers;
 
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.webapideneme1.models.Comment;
 import com.demo.webapideneme1.models.Group;
 import com.demo.webapideneme1.models.User;
+import com.demo.webapideneme1.repositories.UserRepository;
 import com.demo.webapideneme1.services.CommentService;
 import com.demo.webapideneme1.services.GroupService;
 import com.demo.webapideneme1.services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin
 @RestController
 @RequestMapping("/comments")
@@ -63,9 +67,10 @@ public class CommentController {
 	}
 	
 	@GetMapping("/getcommentsofagroup")
-	public List<Comment> getCommentsOfAGroup(long groupId)
+	public List<Comment> getCommentsOfAGroup(HttpServletRequest request,long groupId)
 	{
-		List<Comment> comments=commentService.getCommentsOfAGroup(groupId);
+		
+		List<Comment> comments=commentService.getCommentsOfAGroup(request,groupId);
 		return comments;
 	}
 	@GetMapping("/getallcomments")
@@ -77,58 +82,21 @@ public class CommentController {
 	}
 	
 	@PostMapping("/createcomment")
-	public String createComment(Long userId, String content,Long commentIdToBeQuoted,Long groupId)
+	public String createComment(HttpServletRequest request, String content,Long commentIdToBeQuoted,Long groupId)
 	{
-		User user=userService.getOneUserById(userId);
-		Group group= groupService.getOneGroupById(groupId);
-		String result="";
-		Comment commentToBeQuoted=null;
-		if(commentIdToBeQuoted!=null)
-		commentToBeQuoted=commentService.getOneCommentById(commentIdToBeQuoted);
-		Comment comment;
-		
-		if(user!=null&& group!=null
-				&& group.getMembers().contains(user)
-		)
-		{
-			comment=new Comment();
-			comment.setOwner(user);
-			comment.setGroup(group);
-			comment.setContent(content);
-			if(commentToBeQuoted!=null)
-			{
-				if(!commentToBeQuoted.getOwner().getBannedUsers().contains(user)
-						&&!user.getBannedUsers().contains(commentToBeQuoted.getOwner()))
-				{
-					if(commentToBeQuoted.getGroup()==group)
-					comment.setQuotedComment(commentToBeQuoted);
-				}else comment.setQuotedComment(null);
-			}
-			else comment.setQuotedComment(null);
-			result =commentService.saveComment(comment);
-			return result;
-			
-		} else return "User or group not found";
+		return commentService.createComment(request,content,commentIdToBeQuoted,groupId);
 		
 	}
 	
 	@PutMapping("/updatecomment")
-	public String updateComment(Long commentId,String newcontent)
+	public String updateComment(HttpServletRequest request,Long commentId,String newcontent)
 	{
-		Comment comment=commentService.getOneCommentById(commentId);
-		if(comment!=null)
-		{
-			comment.setContent(newcontent);
-			comment.setCommentEditDate(new Date());
-			String result=commentService.saveComment(comment);
-			
-			return "Comment succesfully updated";
-		}else return "Comment not found";
+		return commentService.updateComment(request,commentId,newcontent);
 	}
 	@DeleteMapping("/deletecomment")
-	public String deleteComment(long commentId)
+	public String deleteComment(HttpServletRequest request,long commentId)
 	{
-		String result=commentService.deleteComment(commentId);
+		String result=commentService.deleteComment(request,commentId);
 		return result;
 	}
 	

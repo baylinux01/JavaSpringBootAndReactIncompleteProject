@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.webapideneme1.models.Message;
 import com.demo.webapideneme1.services.MessageService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/messages")
@@ -33,18 +35,18 @@ public class MessageController {
 		return messageService.getOneMessageById(messageId);
 	}
 	@PostMapping("/createmessage")
-	public String createMessage(Long messageSenderId,Long messageReceiverId,
+	public String createMessage(HttpServletRequest request,Long messageReceiverId,
 			String messageContent,Long quotedMessageId)
 	{
 		
-		return messageService.createMessage(messageSenderId,messageReceiverId,
+		return messageService.createMessage(request,messageReceiverId,
 				messageContent,quotedMessageId);
 	}
 	@PutMapping("/editmessagecontent")
-	public String editMessageContent(Long messageId,
+	public String editMessageContent(HttpServletRequest request,Long messageId,
 			String newMessageContent)
 	{
-		return messageService.editMessageContent(messageId,newMessageContent);
+		return messageService.editMessageContent(request,messageId,newMessageContent);
 	}
 	
 	@PutMapping("/editmessagestatus")
@@ -55,22 +57,22 @@ public class MessageController {
 	}
 	
 	@PutMapping("/editquotedmessageofamessage")
-	public String editQuotedMessageOfAMessage(Long messageId,
+	public String editQuotedMessageOfAMessage(HttpServletRequest request,Long messageId,
 			Long newQuotedMessageId)
 	{
-		return messageService.editQuotedMessageOfAMessage(messageId,newQuotedMessageId);
+		return messageService.editQuotedMessageOfAMessage(request,messageId,newQuotedMessageId);
 	}
 	
 	@DeleteMapping("/deletemessage")
-	public String deleteMessage(Long messageId,Long messageSenderId)
+	public String deleteMessage(HttpServletRequest request,Long messageId)
 	{
-		return messageService.deleteMessage(messageId);
+		return messageService.deleteMessage(request,messageId);
 	}
 	
 	@GetMapping("/getmessagesbetweentwousers")
-	public List<Message> getMessagesBetweenTwoUsers(Long user1Id,Long user2Id)
+	public List<Message> getMessagesBetweenTwoUsers(HttpServletRequest request,Long user2Id)
 	{
-		return messageService.getMessagesBetweenTwoUsers(user1Id,user2Id);
+		return messageService.getMessagesBetweenTwoUsers(request,user2Id);
 	}
 	
 

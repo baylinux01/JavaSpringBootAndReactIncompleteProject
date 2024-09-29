@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.controllers;
 
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,8 @@ import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.services.CommentService;
 import com.demo.webapideneme1.services.GroupService;
 import com.demo.webapideneme1.services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin
 @RestController
 @RequestMapping("/groups")
@@ -67,65 +70,30 @@ public class GroupController {
 		return group.getMembers();
 	}
 	@PostMapping("/creategroup")
-	public String createGroup(Long ownerId,String name)
+	public String createGroup(HttpServletRequest request,String name)
 	{
-		User owner= userService.getOneUserById(ownerId);
-		if(!name.matches("^[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{1,20}(\\s[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{1,20}){0,10}$"))
-			return "Grup is not suitable to format. Group could not be created";
-		List<Group> groups=groupService.getAllGroups();
-		for(Group g : groups)
-		{
-			if(g.getName().equals(name)) return "A group name cannot be the same as the name of another group. Group creation unsuccessful";
-		}
-		if(owner==null) return "Group cannot be created. Group owner not found";
-		if(owner!=null)
-		{
-			Group group=new Group();
-			group.setOwner(owner);
-			if(group.getMembers()!=null)
-			{
-				group.getMembers().add(owner);
-				group.setMembers(group.getMembers());
-			}else
-			{
-				List<User> members=new ArrayList<User>();
-				members.add(owner);
-				group.setMembers(members);
-			}
-			 
-			group.setName(name);
-			groupService.saveGroup(group);
-			return "Group successfully created";
-		
-		}else return "Group could not be created";
+		return groupService.createGroup(request,name);
 	}
 	@PutMapping("/updategroupname")
-	public String updateGroupName(long userId,long groupId,String newgroupname)
+	public String updateGroupName(HttpServletRequest request,long groupId,String newgroupname)
 	{
-		User user=userService.getOneUserById(userId);
-		Group group=groupService.getOneGroupById(groupId);
-		if(user!=null && group!=null && user==group.getOwner() )
-		{
-			group.setName(newgroupname);
-			groupService.saveGroup(group);
-			return "Group name successfully updated";
-		}
-		return "Group name cannot be updated";
+		return groupService.updateGroupName(request,groupId,newgroupname);
 	}
 	@DeleteMapping("/deletegroupbyid")
-	public String deleteGroupById(long groupId)
+	public String deleteGroupById(HttpServletRequest request,long groupId)
 	{
-		Group group=groupService.getOneGroupById(groupId);
-		if(group!=null)
-		{
-			groupService.deleteGroupById(group);
-			return "Group successfully deleted";
-		}else return "Group not found";
+		
+			return groupService.deleteGroupById(request,groupId);
+			
 	}
 	@PostMapping("/beamemberofgroup")
-	public String beAMemberOfGroup(long groupId,long userId)
+	public String beAMemberOfGroup(HttpServletRequest request,long groupId)
 	{
-		User user=userService.getOneUserById(userId);
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userService.getOneUserByUsername(username);
 		Group group=groupService.getOneGroupById(groupId);
 		if(group!=null&&user!=null)
 		{
@@ -139,9 +107,13 @@ public class GroupController {
 		}else return "Group not found";
 	}
 	@PostMapping("/exitgroup")
-	public String exitGroup(long groupId,long userId)
+	public String exitGroup(HttpServletRequest request,long groupId)
 	{
-		User user=userService.getOneUserById(userId);
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userService.getOneUserByUsername(username);
 		Group group=groupService.getOneGroupById(groupId);
 		if(group!=null&&user!=null)
 		{

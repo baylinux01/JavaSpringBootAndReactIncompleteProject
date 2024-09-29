@@ -1,5 +1,6 @@
 package com.demo.webapideneme1.services;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import com.demo.webapideneme1.models.ConnectionRequest;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.repositories.ConnectionRequestRepository;
 import com.demo.webapideneme1.repositories.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class ConnectionRequestService {
@@ -29,10 +32,14 @@ public class ConnectionRequestService {
 		return connectionRequestRepository.findAll();
 	}
 	
-	public String createConnectionRequest(Long connectionRequestSenderId, Long connectionRequestReceiverId) {
+	public String createConnectionRequest(HttpServletRequest request, Long connectionRequestReceiverId) {
 		
 		List<ConnectionRequest> allConReqs=connectionRequestRepository.findAll();
-		User connectionRequestSender=userRepository.findById(connectionRequestSenderId).orElse(null);
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User connectionRequestSender=userRepository.findByUsername(username);
 		User connectionRequestReceiver=userRepository.findById(connectionRequestReceiverId).orElse(null);
 		if(connectionRequestReceiver.getBannedUsers().contains(connectionRequestSender)
 				||connectionRequestSender.getBannedUsers().contains(connectionRequestReceiver))

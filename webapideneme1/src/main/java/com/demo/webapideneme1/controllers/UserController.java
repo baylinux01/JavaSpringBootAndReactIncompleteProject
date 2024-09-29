@@ -42,23 +42,24 @@ public class UserController {
 	
 	
 	@DeleteMapping("/deleteconnection")
-	public String deleteConnection(Long deletingUserId,Long userToBeDeletedId) 
+	public String deleteConnection(HttpServletRequest request, Long userToBeDeletedId) 
 	{
-		String result=userService.deleteConnection(deletingUserId,userToBeDeletedId);
+		
+		String result=userService.deleteConnection(request,userToBeDeletedId);
 		return result;
 	}
 	
 	@PostMapping("/acceptconnection")
-	public String acceptConnection(Long acceptingUserId,Long userToBeAcceptedId) 
+	public String acceptConnection(HttpServletRequest request,Long userToBeAcceptedId) 
 	{
-		String result=userService.acceptConnection(acceptingUserId,userToBeAcceptedId);
+		String result=userService.acceptConnection(request,userToBeAcceptedId);
 		return result;
 	}
 	
 	@PostMapping("/banuser")
-	public String banUser(Long banningUserId,Long userToBeBannedId) 
+	public String banUser(HttpServletRequest request,Long userToBeBannedId) 
 	{
-		String result=userService.banUser(banningUserId,userToBeBannedId);
+		String result=userService.banUser(request,userToBeBannedId);
 		return result;
 	}
 	
@@ -68,10 +69,10 @@ public class UserController {
 		return userService.getConnectionsOfAUser(userId);
 	}
 	
-	@GetMapping("/getbannedusersofauser")
-	public List<User> getBannedUsersOfAUser(Long userId)
+	@GetMapping("/getbannedusersofcurrentuser")
+	public List<User> getBannedUsersOfCurrentUser(HttpServletRequest request)
 	{
-		return userService.getBannedUsersOfAUser(userId);
+		return userService.getBannedUsersOfCurrentUser(request);
 	}
 
 	@GetMapping("/getsearchedusers")
@@ -117,7 +118,7 @@ public class UserController {
 		
 	}
 	@PostMapping("/enteruser")
-	public Dto enterUser(String username,String password) throws InvalidKeyException, NoSuchAlgorithmException 
+	public User enterUser(String username,String password) throws InvalidKeyException, NoSuchAlgorithmException 
 	{
 		return userService.enterUser(username,password);
 		
@@ -129,11 +130,11 @@ public class UserController {
 	}
 	@PutMapping("/updateuser")
 	public String updateUser
-	(long id, String newname,String newsurname, String newusername,
+	(HttpServletRequest request, String newname,String newsurname, String newusername,
 		MultipartFile newuserimage,String newbirthdate) 
 	throws IOException
 	{
-		String result=userService.updateUser(id, newname,newsurname, newusername,newuserimage,newbirthdate);
+		String result=userService.updateUser(request, newname,newsurname, newusername,newuserimage,newbirthdate);
 		return result;
 	}
 	@DeleteMapping
@@ -144,10 +145,10 @@ public class UserController {
 	}
 	
 	@PutMapping("/changeuserpassword")
-	public String changeUserPassword(long userId, String newPassword)
+	public String changeUserPassword(HttpServletRequest request,String newPassword)
 	{
 		
-		String result=userService.changeUserPassword(userId,newPassword);
+		String result=userService.changeUserPassword(request,newPassword);
 			return result;
 		
 	}

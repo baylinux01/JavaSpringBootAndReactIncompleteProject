@@ -52,7 +52,7 @@ public class User {
 	@ManyToMany
 	private List<User> connections;
 	
-	private Collection<? extends GrantedAuthority> authorities;
+	private String roles;
 
 	public long getId() {
 		return id;
@@ -126,13 +126,15 @@ public class User {
 		this.connections = connections;
 	}
 
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
+	public String getRoles() {
+		return roles;
 	}
 
-	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-		this.authorities = authorities;
+	public void setRoles(String roles) {
+		this.roles = roles;
 	}
+
+	
 	
 	
 

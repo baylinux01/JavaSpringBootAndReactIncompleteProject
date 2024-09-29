@@ -14,6 +14,8 @@ import com.demo.webapideneme1.models.ConnectionRequest;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.services.ConnectionRequestService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/connectionrequests")
@@ -37,10 +39,10 @@ public class ConnectionRequestController {
 	
 	@PostMapping("/createconnectionrequest")
 	protected String createConnectionRequest
-	(Long connectionRequestSenderId,Long connectionRequestReceiverId)
+	(HttpServletRequest request,Long connectionRequestReceiverId)
 	{
 		String result=connectionRequestService
-				.createConnectionRequest(connectionRequestSenderId,connectionRequestReceiverId);
+				.createConnectionRequest(request,connectionRequestReceiverId);
 		return result;
 	
 	}
