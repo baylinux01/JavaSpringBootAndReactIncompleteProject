@@ -40,10 +40,11 @@ function App() {
   const [group,setGroup]=useState({});
   const [user2,setUser2]=useState({});
   const[bannedUsersOfUser,setBannedUsersOfUser]=useState({});
+  const[password,setPassword]=useState("");
   
 
   function fetchGroups(){
-    axios.defaults.baseURL="http://localhost:8083";
+    axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
       {setGroups([...response.data])});
   }
@@ -59,26 +60,26 @@ function App() {
   return (
     <div>
     <BrowserRouter>
-    <Navbar user={user} setUser={setUser}></Navbar>
+    <Navbar user={user} setUser={setUser} password={password} setPassword={setPassword} ></Navbar>
     
     <Routes>
 
     <Route exact path="/" element={<Home 
     group={group} setGroup={setGroup} groups={groups} setGroups={setGroups} unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
-    user={user} setUser={setUser} 
+    user={user} setUser={setUser} password={password} setPassword={setPassword}
     signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult}>
     </Home>}></Route>
 
     <Route exact path="/groups" element={<Groups 
     groups={groups} setGroups={setGroups} 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
-    user={user} setUser={setUser} 
+    user={user} setUser={setUser} password={password} setPassword={setPassword}
     signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult}>
     </Groups>}></Route>
 
     <Route exact path="/groups/group/:groupId" element={<Group 
     group={group} setGroup={setGroup}
-    user={user} setUser={setUser}
+    user={user} setUser={setUser} password={password} setPassword={setPassword}
     bannedUsersOfUser={bannedUsersOfUser} setBannedUsersOfUser={setBannedUsersOfUser}>
     </Group>}></Route>
 
@@ -86,7 +87,7 @@ function App() {
     element=
     {
     <GroupCreationPage 
-    user={user} setUser={setUser} groups={groups} setGroups={setGroups}>
+    user={user} setUser={setUser} password={password} setPassword={setPassword} groups={groups} setGroups={setGroups}>
     </GroupCreationPage>
     }>
     </Route>
@@ -94,19 +95,19 @@ function App() {
     <Route exact path="/users/user/:user2Id" element={<User 
     user2={user2} setUser2={setUser2} 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
-    user={user} setUser={setUser} 
+    user={user} setUser={setUser} password={password} setPassword={setPassword}
     signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult}>
     </User>}></Route>
 
     <Route exact path="/register" element={<Register 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
-    user={user} setUser={setUser} 
+    user={user} setUser={setUser} password={password} setPassword={setPassword}
     signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult} >
     </Register>}></Route>
 
     <Route exact path="/login" element={<Login 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
-    user={user} setUser={setUser} signupformsubmitresult={signupformsubmitresult} 
+    user={user} setUser={setUser} password={password} setPassword={setPassword} signupformsubmitresult={signupformsubmitresult} 
     setSignupformsubmitresult={setSignupformsubmitresult}>
     </Login>}></Route>
     

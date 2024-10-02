@@ -7,20 +7,20 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function GroupCreationPage({user,setUser,groups,setGroups}) {
+export default function GroupCreationPage({password,setPassword,user,setUser,groups,setGroups}) {
 
   const[newGroupName,setNewGroupName]=useState("");
 
   const navigate=useNavigate();
 
   function fetchGroups(){
-    axios.defaults.baseURL="http://localhost:8083";
+    axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>{setGroups([...response.data])});
   }
 
   function fetchUser(){
-    axios.defaults.baseURL="http://localhost:8083";
-    axios.get("/users/getoneuserbyid",{params:{userId:user.id}})
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:user.id}})
     .then((response)=>{setUser({...response.data})});
   }
 
@@ -30,10 +30,17 @@ export default function GroupCreationPage({user,setUser,groups,setGroups}) {
         
       //axios kütüphanesi npm install axios kodu ile indirilebilir.
       //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.qs kullanmayınca veriler api'ya null gidiyor
-     const qs=require('qs');
-     axios.defaults.baseURL="http://localhost:8083";
-     axios.post("/groups/creategroup",qs.stringify({ownerId:user.id,name:newGroupName}))
-    
+      axios.defaults.baseURL="http://localhost:8080";
+      const qs=require('qs');
+      axios.post("/groups/creategroup", 
+        qs.stringify( {ownerId: user.id,
+        name: newGroupName})
+      ,{
+        auth: {
+          username: user.username,
+          password: password
+        }
+      });
       
       fetchGroups();
       fetchUser();

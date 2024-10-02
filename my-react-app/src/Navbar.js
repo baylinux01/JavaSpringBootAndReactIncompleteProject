@@ -1,9 +1,12 @@
 import React, { useEffect,useState } from 'react';
 import {useParams,useNavigate,Link} from "react-router-dom";
 import axios from "axios";
-export default function Navbar({user,setUser}) {
+export default function Navbar({password,setPassword,user,setUser}) {
 
-  
+  const handleSignOut=()=>{
+    setUser({});
+    setPassword("");
+  }
 
   return (
         <div style={{backgroundColor:"black",height:"50px",display:"flex",justifyContent:"space-between",paddingTop:"10px",paddingBottom:"10px"}}>
@@ -14,7 +17,7 @@ export default function Navbar({user,setUser}) {
           {Object.keys(user).length!==0 ?
           <div style={{display:"flex",columnGap:"20px"}}>
             <div style={{color:"red",textDecoration:"none"}}> {user.name+" "+user.surname}</div>
-          <Link to={"/login"}style={{color:"red",textDecoration:"none",marginRight:"20px"}} onClick={()=>setUser({})} >Sign Out</Link>
+          <Link to={"/login"}style={{color:"red",textDecoration:"none",marginRight:"20px"}} onClick={()=>handleSignOut()} >Sign Out</Link>
           </div>
           :<div style={{display:"flex",columnGap:"20px"}}>
           <Link to={"/login"}style={{color:"red",textDecoration:"none"}}>Sign In</Link>

@@ -12,7 +12,7 @@ import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
 
 
-export default function Group({group,setGroup,user,setUser,bannedUsersOfUser,setBannedUsersOfUser}) {
+export default function Group({password,setPassword,group,setGroup,user,setUser,bannedUsersOfUser,setBannedUsersOfUser}) {
 
   
 const[newCommentContent,setNewCommentContent] =useState("");
@@ -24,35 +24,35 @@ const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
 const{groupId}=useParams();
 
 function fetchGroup(){
-    axios.defaults.baseURL="http://localhost:8083";
-    axios.get("/groups/getonegroupbyid",{params:{groupId:groupId}}).then((response)=>{setGroup({...response.data})});
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/groups/getonegroupbyid",{auth: {username: user.username,password: password},params:{groupId:groupId}}).then((response)=>{setGroup({...response.data})});
   }
 function fetchComments(){
-    axios.defaults.baseURL="http://localhost:8083";
-    axios.get("/comments/getcommentsofagroup",{params:{groupId:groupId}}).then((response)=>{setGroupComments([...response.data])});
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/comments/getcommentsofagroup",{auth: {username: user.username,password: password},params:{groupId:groupId}}).then((response)=>{setGroupComments([...response.data])});
   }
   function fetchMembers(){
-    axios.defaults.baseURL="http://localhost:8083";
-    return axios.get("/groups/getonegroupmembersbygroupid",{params:{groupId:groupId}}).then((response)=>{setGroupMembers([...response.data])});
+    axios.defaults.baseURL="http://localhost:8080";
+    return axios.get("/groups/getonegroupmembersbygroupid",{auth: {username: user.username,password: password},params:{groupId:groupId}}).then((response)=>{setGroupMembers([...response.data])});
   }
 
   function fetchUser(){
-    axios.defaults.baseURL="http://localhost:8083";
-    axios.get("/users/getoneuserbyid",{params:{userId:user.id}})
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:user.id}})
     .then((response)=>{setUser({...response.data})});
     console.log(user)
   }
 
   function fetchBannedUsersOfUser(){
-    axios.defaults.baseURL="http://localhost:8083";
-    axios.get("/users/getbannedusersofauser",{params:{userId:user.id}})
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/users/getbannedusersofcurrentuser",{auth: {username: user.username,password: password},params:{}})
     .then((response)=>{setBannedUsersOfUser([...response.data])});
     
   }
 
   function fetchBannedUsersOfCommentOwner(id){
-    axios.defaults.baseURL="http://localhost:8083";
-    axios.get("/users/getbannedusersofauser",{params:{userId:id}})
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/users/getbannedusersofauser",{auth: {username: user.username,password: password},params:{userId:id}})
     .then((response)=>{setBannedUsersOfCommentOwner([...response.data])});
     
   }
@@ -94,18 +94,26 @@ function fetchComments(){
       //axios kütüphanesi npm install axios kodu ile indirilebilir.
       //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
       //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
-     const qs=require('qs');
-     axios.defaults.baseURL="http://localhost:8083";
-     axios.post("/comments/createcomment",
-     qs.stringify({userId:user.id,content:newCommentContent,
-      commentIdToBeQuoted:commentToBeQuoted.id, groupId:group.id}));
-      setNewCommentContent("");
-      setCommentToBeQuoted({content:""});
+     
+      axios.defaults.baseURL="http://localhost:8080";
+      const qs=require('qs');
+      axios.post("/comments/createcomment", 
+        qs.stringify({content:newCommentContent,
+          commentIdToBeQuoted:commentToBeQuoted.id, groupId:group.id
+        })
+      ,{
+        auth: {
+          username: user.username,
+          password: password
+        }
+      });
+      // setNewCommentContent("");
+      // setCommentToBeQuoted({content:""});
       fetchComments();
-      fetchMembers();
-      fetchGroup();
-      fetchUser();
-      fetchBannedUsersOfUser();
+      // fetchMembers();
+      // fetchGroup();
+      // fetchUser();
+      // fetchBannedUsersOfUser();
     
     }
     
@@ -146,6 +154,9 @@ function fetchComments(){
             && !_.find(bannedUsersOfCommentOwner,user)?
             setCommentToBeQuoted({...comment}):
         setCommentToBeQuoted(null)}>Quote</Button>
+          :<div></div>}
+    {_.isEqual(comment.owner,user)|| user.roles.includes("ADMIN")?
+          <Button variant="danger" sync="true">Delete</Button>
           :<div></div>}
       </ListGroup>
       </div>

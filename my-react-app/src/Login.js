@@ -10,12 +10,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
-export default function Login({signupformsubmitresult,setSignupformsubmitresult,user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}) 
+export default function Login({password,setPassword,signupformsubmitresult,setSignupformsubmitresult,user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}) 
 {
   
 
     const[username,setUsername]=useState("");
-    const[password,setPassword]=useState("");
+    
     
     const navigate=useNavigate();
 
@@ -29,14 +29,12 @@ export default function Login({signupformsubmitresult,setSignupformsubmitresult,
       //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
       //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
      const qs=require('qs');
-     axios.defaults.baseURL="http://localhost:8083";
+     axios.defaults.baseURL="http://localhost:8080";
      axios.post("/users/enteruser",qs.stringify({username:username,password:password}))
      .then((response)=>
       {
-      localStorage.setItem("token",response.data.token);
-      localStorage.setItem("username",response.data.username);
-      localStorage.setItem("id",response.data.id);
-      console.log(localStorage.getItem("id"));
+        setUser({...response.data})
+      
       if(Object.keys(response.data).length !==0 ){navigate("/");}
       if(Object.keys(response.data).length ===0 )
       {setUnsuccessfulsignin(true); setSignupformsubmitresult("");}
@@ -72,7 +70,7 @@ export default function Login({signupformsubmitresult,setSignupformsubmitresult,
           Password
         </Form.Label>
         <Col sm={10}>
-          <Form.Control type="password" placeholder="Password" name="password" autoComplete="off" value={password} onChange={(e)=>setPassword(e.target.value)}/>
+          <Form.Control type="password" placeholder="Password" name="password" autoComplete="off"  onChange={(e)=>setPassword(e.target.value)}/>
         </Col>
       </Form.Group>
       

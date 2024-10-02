@@ -6,19 +6,19 @@ import { Table,Button, ListGroup } from 'react-bootstrap';
 
 
 export default function Home(
-  {group,setgroup,groups,setGroups,signupformsubmitresult,setSignupformsubmitresult,
+  {password,setPassword,group,setgroup,groups,setGroups,signupformsubmitresult,setSignupformsubmitresult,
     user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}
   ) {
   
 
   function fetchGroups(){
-    axios.defaults.baseURL="http://localhost:8083";
+    axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
       {setGroups([...response.data]);});
   }
 
   function fetchUser(){
-    axios.defaults.baseURL="http://localhost:8083";
+    axios.defaults.baseURL="http://localhost:8080";
     
     axios.get("/users/getoneuserbyid",{params:{userId:localStorage.getItem("id")}})
     .then((response)=>{setUser({...response.data})});
@@ -40,7 +40,7 @@ export default function Home(
         
       //axios kütüphanesi npm install axios kodu ile indirilebilir.
      
-     axios.defaults.baseURL="http://localhost:8083";
+     axios.defaults.baseURL="http://localhost:8080";
      axios.delete("/groups/deletegroupbyid",{params:{groupId:groupId}});
      fetchGroups();
    
@@ -56,7 +56,7 @@ export default function Home(
         //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
         //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
        const qs=require('qs');
-       axios.defaults.baseURL="http://localhost:8083";
+       axios.defaults.baseURL="http://localhost:8080";
        axios.post("/groups/exitgroup",qs.stringify({groupId:groupId,userId:userId}));
        fetchGroups();
      

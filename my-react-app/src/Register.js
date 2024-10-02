@@ -8,12 +8,12 @@ import Row from 'react-bootstrap/Row';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-export default function Register({signupformsubmitresult,setSignupformsubmitresult,user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}) {
+export default function Register({password,setPassword,signupformsubmitresult,setSignupformsubmitresult,user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}) {
   
 const[name,setName]=useState("");
 const[surname,setSurname]=useState("");
 const[username,setUsername]=useState("");
-const[password,setPassword]=useState("");
+
 const[birthDate,setBirthDate]=useState("");
 
 
@@ -26,7 +26,7 @@ function handlesignupformsubmit(e,signupformsubmitresult){
     //axios kütüphanesi npm install axios kodu ile indirilebilir.
     //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.qs kullanmayınca veriler api'ya null gidiyor
      const qs=require('qs');
-     axios.defaults.baseURL="http://localhost:8083";
+     axios.defaults.baseURL="http://localhost:8080";
      axios.post("/users/adduser",qs.stringify({name:name,surname:surname,username:username,password:password,birthdate:birthDate}))
     .then((response)=>{setSignupformsubmitresult(response.data);
       if(response.data=='Registration is successful'){navigate("/login")}});

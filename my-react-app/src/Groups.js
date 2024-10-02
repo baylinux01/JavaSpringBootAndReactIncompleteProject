@@ -11,7 +11,7 @@ import { ListGroup, ListGroupItem,Button } from 'react-bootstrap';
 //_.isEqual() ve _.find metotları lodah kütüphanesine aittir.
 
 export default function Groups(
-  {groups,setGroups,signupformsubmitresult,setSignupformsubmitresult,
+  {password,setPassword,groups,setGroups,signupformsubmitresult,setSignupformsubmitresult,
     user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}
   ) {
 
@@ -19,7 +19,7 @@ export default function Groups(
     
 
   function fetchGroups(){
-    axios.defaults.baseURL="http://localhost:8083";
+    axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
       {setGroups([...response.data]);});
   }
@@ -42,9 +42,11 @@ export default function Groups(
           
         //axios kütüphanesi npm install axios kodu ile indirilebilir.
       
-       axios.defaults.baseURL="http://localhost:8083";
-       axios.delete("/groups/deletegroupbyid",{params:{groupId:groupId}});
-        fetchGroups();
+       axios.defaults.baseURL="http://localhost:8080";
+       axios.delete("/groups/deletegroupbyid",
+        {auth: {username: user.username,password: password},params:{groupId:groupId}});
+      
+      fetchGroups();
        
        
       }
@@ -56,9 +58,19 @@ export default function Groups(
           //axios kütüphanesi npm install axios kodu ile indirilebilir.
           //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
           //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
-         const qs=require('qs');
-         axios.defaults.baseURL="http://localhost:8083";
-         axios.post("/groups/beamemberofgroup",qs.stringify({groupId:groupId,userId:userId}));
+        
+
+         axios.defaults.baseURL="http://localhost:8080";
+      const qs=require('qs');
+      axios.post("/groups/beamemberofgroup", 
+        qs.stringify( {groupId: groupId
+        })
+      ,{
+        auth: {
+          username: user.username,
+          password: password
+        }
+      });
          fetchGroups();
         }
 
@@ -69,9 +81,19 @@ export default function Groups(
             //axios kütüphanesi npm install axios kodu ile indirilebilir.
             //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
             //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
-           const qs=require('qs');
-           axios.defaults.baseURL="http://localhost:8083";
-           axios.post("/groups/exitgroup",qs.stringify({groupId:groupId,userId:userId}));
+           
+
+           axios.defaults.baseURL="http://localhost:8080";
+      const qs=require('qs');
+      axios.post("/groups/exitgroup", 
+        qs.stringify({groupId: groupId
+        })
+      ,{
+        auth: {
+          username: user.username,
+          password: password
+        }
+      });
            fetchGroups();
           }
     

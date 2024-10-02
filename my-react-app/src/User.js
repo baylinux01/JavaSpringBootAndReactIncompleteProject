@@ -3,12 +3,12 @@ import {useParams,Link} from "react-router-dom";
 import axios from "axios";
 
 
-export default function User({user2,setUser2,user,setUser}) {
+export default function User({password,setPassword,user2,setUser2,user,setUser}) {
     const{user2Id}=useParams();
     
     const fetchUser2=()=>{
-      axios.defaults.baseURL="http://localhost:8083";
-      return axios.get("/users/getoneuserbyid",{params:{userId:user2Id}})
+      axios.defaults.baseURL="http://localhost:8080";
+      return axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:user2Id}})
       .then((response)=>{setUser2(response.data)});
     }
 
