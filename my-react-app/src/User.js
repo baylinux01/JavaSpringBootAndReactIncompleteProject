@@ -19,7 +19,7 @@ export default function User({password,setPassword,user2,setUser2,user,setUser})
     fetchUser2();
     // fetch("/groups/getonegroupbyid?groupId="+groupId).then(response=>{return response.json()})
     // .then(data=>{setGroup(data)})
- },[user2])
+ })
   return (
     <div>
     {Object.keys(user2).length!==0?

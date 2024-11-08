@@ -31,22 +31,24 @@ export default function Home(
     {
       fetchUser();
     }
-  },[]);
+    fetchGroups();
+  });
 
 
   function deleteGroup(groupId)
-    {
-        
-        
-      //axios kütüphanesi npm install axios kodu ile indirilebilir.
-     
-     axios.defaults.baseURL="http://localhost:8080";
-     axios.delete("/groups/deletegroupbyid",{params:{groupId:groupId}});
-     fetchGroups();
-   
-     
-     
-    }
+      {
+          
+          
+        //axios kütüphanesi npm install axios kodu ile indirilebilir.
+      
+       axios.defaults.baseURL="http://localhost:8080";
+       axios.delete("/groups/deletegroupbyid",
+        {auth: {username: user.username,password: password},params:{groupId:groupId}});
+      
+      fetchGroups();
+       
+       
+      }
 
     function leaveGroup(groupId,userId)
       {

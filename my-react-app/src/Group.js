@@ -57,6 +57,25 @@ function fetchComments(){
     
   }
 
+  function deleteComment(commentId)
+  {
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.delete("/comments/deletecomment",
+      {auth: {username: user.username,password: password},params:{commentId:commentId}});
+    
+    // axios.defaults.baseURL="http://localhost:8080";
+    // const qs=require('qs');
+    // axios.delete("/comments/deletecomment", 
+    //   qs.stringify({commentId:commentId
+    //   })
+    // ,{
+    //   auth: {
+    //     username: user.username,
+    //     password: password
+    //   }
+    // });
+  }
+
 
     useEffect(()=> {
 
@@ -69,7 +88,7 @@ function fetchComments(){
         fetchUser();  
         fetchBannedUsersOfUser();
         
-     },[user,group,groupComments,groupMembers,bannedUsersOfUser]);
+     });
 
      
 
@@ -107,13 +126,15 @@ function fetchComments(){
           password: password
         }
       });
-      // setNewCommentContent("");
-      // setCommentToBeQuoted({content:""});
+      
+      
       fetchComments();
-      // fetchMembers();
-      // fetchGroup();
-      // fetchUser();
-      // fetchBannedUsersOfUser();
+      fetchMembers();
+      fetchGroup();
+      fetchUser();
+      fetchBannedUsersOfUser();
+      setNewCommentContent("");
+      setCommentToBeQuoted({content:""});
     
     }
     
@@ -156,7 +177,7 @@ function fetchComments(){
         setCommentToBeQuoted(null)}>Quote</Button>
           :<div></div>}
     {_.isEqual(comment.owner,user)|| user.roles.includes("ADMIN")?
-          <Button variant="danger" sync="true">Delete</Button>
+          <Button variant="danger" sync="true" onClick={()=>deleteComment(comment.id)}>Delete</Button>
           :<div></div>}
       </ListGroup>
       </div>
