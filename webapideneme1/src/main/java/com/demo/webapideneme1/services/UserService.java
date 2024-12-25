@@ -506,6 +506,30 @@ public class UserService {
 
 
 
+	public String changeUserImage(HttpServletRequest request, MultipartFile newuserimage) throws IOException {
+		// TODO Auto-generated method stub
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
+		if(newuserimage!=null&&newuserimage.getContentType()!=null) 
+		{
+			if(!newuserimage.getContentType().equals("image/jpeg")&&!newuserimage.getContentType().equals("image/png")) 
+			return "Image file is not suitable to the format. Please load a jpeg or png file";
+			else 
+			{
+				user.setUserImage(newuserimage.getBytes());
+				return "userimage successfully changed";
+			}
+		}
+		return "user image not found";
+	}
+
+
+
+
+
 	
 
 

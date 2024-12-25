@@ -128,6 +128,11 @@ public class UserController {
 	{
 		
 	}
+	@PutMapping("/changeuserimage")
+	public String changeUserImage(HttpServletRequest request,MultipartFile newuserimage) throws IOException
+	{
+		return userService.changeUserImage(request,newuserimage);
+	}
 	@PutMapping("/updateuser")
 	public String updateUser
 	(HttpServletRequest request, String newname,String newsurname, String newusername,
