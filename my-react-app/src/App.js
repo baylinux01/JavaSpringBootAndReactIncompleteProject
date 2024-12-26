@@ -12,6 +12,7 @@ import User from "./User";
 import Register from "./Register";
 import Login from "./Login";
 import GroupCreationPage from './GroupCreationPage';
+import Users from "./Users"
 import _ from "lodash";
 
 //react'ta lodash kütüphanesi objeleri karşılaştırmaya veya
@@ -36,6 +37,7 @@ function App() {
   const[unsuccessfulsignin,setUnsuccessfulsignin]=useState(false);
   const [signupformsubmitresult,setSignupformsubmitresult]=useState("");
   const [user,setUser]=useState({});
+  const [users,setUsers]=useState([]);
   const[groups,setGroups]=useState([]);
   const [group,setGroup]=useState({});
   const [user2,setUser2]=useState({});
@@ -50,11 +52,7 @@ function App() {
   }
 
  
-    // useEffect(()=> {
-      
-      
-
-    //   fetchGroups();},[groups])
+    
 
 
   return (
@@ -91,7 +89,15 @@ function App() {
     </GroupCreationPage>
     }>
     </Route>
-
+    <Route
+    exact path='/users/users' element={<Users
+      users={users} setUsers={setUsers}
+      user2={user2} setUser2={setUser2} 
+      unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
+      user={user} setUser={setUser} password={password} setPassword={setPassword}
+      signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult}>
+    </Users>}>
+    </Route>
     <Route exact path="/users/user/:user2Id" element={<User 
     user2={user2} setUser2={setUser2} 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 

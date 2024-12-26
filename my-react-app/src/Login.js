@@ -34,7 +34,7 @@ export default function Login({password,setPassword,signupformsubmitresult,setSi
      .then((response)=>
       {
         setUser({...response.data})
-      
+        localStorage.setItem("id",response.data.id);
       if(Object.keys(response.data).length !==0 ){navigate("/");}
       if(Object.keys(response.data).length ===0 )
       {setUnsuccessfulsignin(true); setSignupformsubmitresult("");}

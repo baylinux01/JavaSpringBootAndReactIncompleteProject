@@ -34,7 +34,7 @@ export default function Groups(
     useEffect(()=> {
       
       
-      fetchGroups();})
+      fetchGroups();},[])
 
     function deleteGroup(groupId)
       {

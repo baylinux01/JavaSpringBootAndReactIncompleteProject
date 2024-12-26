@@ -20,7 +20,7 @@ export default function Home(
   function fetchUser(){
     axios.defaults.baseURL="http://localhost:8080";
     
-    axios.get("/users/getoneuserbyid",{params:{userId:localStorage.getItem("id")}})
+    axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:localStorage.getItem("id")}})
     .then((response)=>{setUser({...response.data})});
   }
   
@@ -32,7 +32,7 @@ export default function Home(
       fetchUser();
     }
     fetchGroups();
-  });
+  },[]);
 
 
   function deleteGroup(groupId)
@@ -50,20 +50,51 @@ export default function Home(
        
       }
 
-    function leaveGroup(groupId,userId)
-      {
-          
-          
-        //axios kütüphanesi npm install axios kodu ile indirilebilir.
-        //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
-        //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
-       const qs=require('qs');
-       axios.defaults.baseURL="http://localhost:8080";
-       axios.post("/groups/exitgroup",qs.stringify({groupId:groupId,userId:userId}));
-       fetchGroups();
-     
-       
+      function joinGroup(groupId,userId)
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+        
+
+         axios.defaults.baseURL="http://localhost:8080";
+      const qs=require('qs');
+      axios.post("/groups/beamemberofgroup", 
+        qs.stringify( {groupId: groupId
+        })
+      ,{
+        auth: {
+          username: user.username,
+          password: password
+        }
+      });
+         fetchGroups();
+        }
+
+        function leaveGroup(groupId,userId)
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         
+
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.post("/groups/exitgroup", 
+      qs.stringify({groupId: groupId
+      })
+    ,{
+      auth: {
+        username: user.username,
+        password: password
       }
+    });
+         fetchGroups();
+        }
 
  
 

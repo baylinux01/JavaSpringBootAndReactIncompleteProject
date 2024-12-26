@@ -62,7 +62,7 @@ function fetchComments(){
     axios.defaults.baseURL="http://localhost:8080";
     axios.delete("/comments/deletecomment",
       {auth: {username: user.username,password: password},params:{commentId:commentId}});
-    
+    fetchComments();
     // axios.defaults.baseURL="http://localhost:8080";
     // const qs=require('qs');
     // axios.delete("/comments/deletecomment", 
@@ -84,11 +84,12 @@ function fetchComments(){
 
         fetchGroup();
         fetchComments();
-        fetchMembers(); 
-        fetchUser();  
-        fetchBannedUsersOfUser();
+        //fetchMembers(); 
+        //fetchUser();  
+        //fetchBannedUsersOfUser();
+        //fetchBannedUsersOfCommentOwner();
         
-     });
+     },[]);
 
      
 

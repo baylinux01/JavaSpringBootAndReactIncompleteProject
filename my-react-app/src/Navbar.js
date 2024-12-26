@@ -13,6 +13,7 @@ export default function Navbar({password,setPassword,user,setUser}) {
           <div style={{display:"flex",columnGap:"20px"}}>
           <Link to={"/"}style={{color:"red",textDecoration:"none",marginLeft:"10px"}}>Home</Link>
           <Link to={"/groups"}style={{color:"red",textDecoration:"none"}}>Groups</Link>
+          <Link to={"/users/users"}style={{color:"red",textDecoration:"none"}}>Users</Link>
           </div>
           {Object.keys(user).length!==0 ?
           <div style={{display:"flex",columnGap:"20px"}}>

@@ -16,17 +16,20 @@ export default function User({password,setPassword,user2,setUser2,user,setUser})
     //fetchGroup();
     //fetchComments();
     //fetchMembers();
-    fetchUser2();
+    if(localStorage.getItem("id")!=null)
+      {
+        fetchUser2();
+      }
     // fetch("/groups/getonegroupbyid?groupId="+groupId).then(response=>{return response.json()})
     // .then(data=>{setGroup(data)})
- })
+ },[])
   return (
     <div>
     {Object.keys(user2).length!==0?
     <img style={{position:"absolute",height:"100px",width:"100px",
       top:"50px",left:"0px"
     }} src={`data:image/*;base64,${user2.userImage}`}/>:
-    <div></div>
+    <div>Kullanıcı Profilini Görmek İçin Lütfen Giriş Yapın</div>
   }
     <div style={{position:"absolute",
       top:"50px",left:"120px"
