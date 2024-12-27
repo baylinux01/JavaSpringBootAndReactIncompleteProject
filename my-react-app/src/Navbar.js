@@ -1,11 +1,14 @@
 import React, { useEffect,useState } from 'react';
 import {useParams,useNavigate,Link} from "react-router-dom";
 import axios from "axios";
-export default function Navbar({password,setPassword,user,setUser}) {
+export default function Navbar({password,setPassword,user,setUser,user2,setUser2}) {
 
   const handleSignOut=()=>{
     setUser({});
+    
+    setUser2({});
     setPassword("");
+    localStorage.clear();
   }
 
   return (

@@ -20,16 +20,16 @@ export default function Home(
   function fetchUser(){
     axios.defaults.baseURL="http://localhost:8080";
     
-    axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:localStorage.getItem("id")}})
+    axios.get("/users/getoneuserbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:localStorage.getItem("id")}})
     .then((response)=>{setUser({...response.data})});
   }
   
   
   useEffect(()=>{
     
-    if(localStorage.getItem("id")!=null)
+    if(localStorage.getItem("user")!=null)
     {
-      fetchUser();
+      user=JSON.parse(localStorage.getItem("user"));
     }
     fetchGroups();
   },[]);
@@ -43,7 +43,7 @@ export default function Home(
       
        axios.defaults.baseURL="http://localhost:8080";
        axios.delete("/groups/deletegroupbyid",
-        {auth: {username: user.username,password: password},params:{groupId:groupId}});
+        {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}});
       
       fetchGroups();
        
@@ -66,8 +66,8 @@ export default function Home(
         })
       ,{
         auth: {
-          username: user.username,
-          password: password
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password")
         }
       });
          fetchGroups();
@@ -89,8 +89,8 @@ export default function Home(
       })
     ,{
       auth: {
-        username: user.username,
-        password: password
+        username: localStorage.getItem("username"),
+        password: localStorage.getItem("password")
       }
     });
          fetchGroups();

@@ -35,6 +35,9 @@ export default function Login({password,setPassword,signupformsubmitresult,setSi
       {
         setUser({...response.data})
         localStorage.setItem("id",response.data.id);
+        localStorage.setItem("user",JSON.stringify(response.data));
+        localStorage.setItem("username",response.data.username);
+        localStorage.setItem("password",password);
       if(Object.keys(response.data).length !==0 ){navigate("/");}
       if(Object.keys(response.data).length ===0 )
       {setUnsuccessfulsignin(true); setSignupformsubmitresult("");}

@@ -87,6 +87,82 @@ public class ConnectionRequestService {
 		connectionRequestRepository.delete(connectionRequest);
 		
 	}
+
+	
+
+	public ConnectionRequest getAConnectionRequestWhoseSenderIsCurrentUser(HttpServletRequest request,
+			Long connectionRequestReceiverId) {
+		// TODO Auto-generated method stub
+				/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+				Principal pl=request.getUserPrincipal();
+				String username=pl.getName();
+				/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+				User user=userRepository.findByUsername(username);
+				User user2=userRepository.findById(connectionRequestReceiverId).orElse(null);
+				ConnectionRequest conreq=null;
+				if(user!=null&& user2!=null)
+				{
+					conreq=connectionRequestRepository.findByConnectionRequestSenderAndConnectionRequestReceiver(user,user2);
+				}
+				
+				return conreq;
+	}
+
+	public ConnectionRequest getAConnectionRequestWhoseReceiverIsCurrentUser(HttpServletRequest request,
+			Long connectionRequestSenderId) {
+		// TODO Auto-generated method stub
+				/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+				Principal pl=request.getUserPrincipal();
+				String username=pl.getName();
+				/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+				User user=userRepository.findByUsername(username);
+				User user2=userRepository.findById(connectionRequestSenderId).orElse(null);
+				ConnectionRequest conreq=null;
+				if(user!=null&& user2!=null)
+				{
+					conreq=connectionRequestRepository.findByConnectionRequestSenderAndConnectionRequestReceiver(user2,user);
+				}
+				
+				return conreq;
+	}
+
+	public String refuseConnectionRequest(HttpServletRequest request, Long connectionRequestSenderId) {
+		// TODO Auto-generated method stub
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
+		User user2=userRepository.findById(connectionRequestSenderId).orElse(null);
+		ConnectionRequest conreq=null;
+		if(user!=null&& user2!=null)
+		{
+			conreq=connectionRequestRepository.findByConnectionRequestSenderAndConnectionRequestReceiver(user2,user);
+			connectionRequestRepository.delete(conreq);
+			return "successfully refused";
+		}
+		
+		return "not found the request to refuse";
+	}
+
+	public String cancelConnectionRequest(HttpServletRequest request, Long connectionRequestReceiverId) {
+		// TODO Auto-generated method stub
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
+		User user2=userRepository.findById(connectionRequestReceiverId).orElse(null);
+		ConnectionRequest conreq=null;
+		if(user!=null&& user2!=null)
+		{
+			conreq=connectionRequestRepository.findByConnectionRequestSenderAndConnectionRequestReceiver(user,user2);
+			connectionRequestRepository.delete(conreq);
+			return "successfully canceled";
+		}
+		
+		return "not found the request to refuse";
+	}
 	
 	
  

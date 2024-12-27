@@ -38,6 +38,8 @@ function App() {
   const [signupformsubmitresult,setSignupformsubmitresult]=useState("");
   const [user,setUser]=useState({});
   const [users,setUsers]=useState([]);
+  const [connectionRequests,setConnectionRequests]=useState([]);
+  const [connectionsOfUser,setConnectionsOfUser]=useState([]);
   const[groups,setGroups]=useState([]);
   const [group,setGroup]=useState({});
   const [user2,setUser2]=useState({});
@@ -58,7 +60,7 @@ function App() {
   return (
     <div>
     <BrowserRouter>
-    <Navbar user={user} setUser={setUser} password={password} setPassword={setPassword} ></Navbar>
+    <Navbar user={user} setUser={setUser} user2={user2} setUser2={setUser2} password={password} setPassword={setPassword} ></Navbar>
     
     <Routes>
 
@@ -91,6 +93,10 @@ function App() {
     </Route>
     <Route
     exact path='/users/users' element={<Users
+      setConnectionsOfUser={setConnectionsOfUser}
+      connectionsOfUser={connectionsOfUser}
+      connectionRequests={connectionRequests}
+      setConnectionRequests={setConnectionRequests}
       users={users} setUsers={setUsers}
       user2={user2} setUser2={setUser2} 
       unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 

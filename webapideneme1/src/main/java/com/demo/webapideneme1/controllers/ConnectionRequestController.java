@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,22 @@ public class ConnectionRequestController {
 		return allConnectionRequests;
 	}
 	
+	@GetMapping("/getaconnectionrequestwhosesenderiscurrentuser")
+	protected ConnectionRequest getAConnectionRequestWhoseSenderIsCurrentUser(HttpServletRequest request,Long connectionRequestReceiverId)
+	{
+		ConnectionRequest connectionRequest=
+				connectionRequestService.getAConnectionRequestWhoseSenderIsCurrentUser(request,connectionRequestReceiverId);
+		return connectionRequest;
+	}
+	
+	@GetMapping("/getaconnectionrequestwhosereceiveriscurrentuser")
+	protected ConnectionRequest getAConnectionRequestWhoseReceiverIsCurrentUser(HttpServletRequest request,Long connectionRequestSenderId)
+	{
+		ConnectionRequest connectionRequest=
+				connectionRequestService.getAConnectionRequestWhoseReceiverIsCurrentUser(request,connectionRequestSenderId);
+		return connectionRequest;
+	}
+	
 	@PostMapping("/createconnectionrequest")
 	protected String createConnectionRequest
 	(HttpServletRequest request,Long connectionRequestReceiverId)
@@ -46,7 +63,17 @@ public class ConnectionRequestController {
 		return result;
 	
 	}
+	@DeleteMapping("/refuseconnectionrequest")
+	public String refuseConnectionRequest(HttpServletRequest request,Long connectionRequestSenderId)
+	{
+		return connectionRequestService.refuseConnectionRequest(request,connectionRequestSenderId);
+	}
 	
+	@DeleteMapping("/cancelconnectionrequest")
+	public String cancelConnectionRequest(HttpServletRequest request,Long connectionRequestReceiverId)
+	{
+		return connectionRequestService.cancelConnectionRequest(request,connectionRequestReceiverId);
+	}
 	
  
 }

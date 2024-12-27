@@ -8,7 +8,7 @@ export default function User({password,setPassword,user2,setUser2,user,setUser})
     
     const fetchUser2=()=>{
       axios.defaults.baseURL="http://localhost:8080";
-      return axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:user2Id}})
+      return axios.get("/users/getoneuserbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:user2Id}})
       .then((response)=>{setUser2(response.data)});
     }
 
@@ -16,7 +16,7 @@ export default function User({password,setPassword,user2,setUser2,user,setUser})
     //fetchGroup();
     //fetchComments();
     //fetchMembers();
-    if(localStorage.getItem("id")!=null)
+    if(localStorage.getItem("user")!=null)
       {
         fetchUser2();
       }
@@ -29,7 +29,7 @@ export default function User({password,setPassword,user2,setUser2,user,setUser})
     <img style={{position:"absolute",height:"100px",width:"100px",
       top:"50px",left:"0px"
     }} src={`data:image/*;base64,${user2.userImage}`}/>:
-    <div>Kullanıcı Profilini Görmek İçin Lütfen Giriş Yapın</div>
+    <div>In order to see user profile please log in</div>
   }
     <div style={{position:"absolute",
       top:"50px",left:"120px"
