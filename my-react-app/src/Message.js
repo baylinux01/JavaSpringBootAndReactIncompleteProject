@@ -68,7 +68,7 @@ export default function Message({messages,setMessages,connectionsOfUser,setConne
        axios.delete("/messages/deletemessage",
         {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{messageId:mId}});
       
-      
+      getMessagesBetweenTwoUsers();
        
        
       }
