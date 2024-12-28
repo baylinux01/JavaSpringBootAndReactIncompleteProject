@@ -33,7 +33,7 @@ export default function Users({ connectionsOfUser,setConnectionsOfUser, connecti
         .then((response)=>{setConnectionsOfUser([...response.data])});
       }
      useEffect(() => {
-        if(localStorage.getItem("user")!=null)
+        if(localStorage.getItem("id")!=null)
             {
               fetchUser();
             }

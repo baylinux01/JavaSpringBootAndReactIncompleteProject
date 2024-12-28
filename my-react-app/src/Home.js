@@ -27,9 +27,9 @@ export default function Home(
   
   useEffect(()=>{
     
-    if(localStorage.getItem("user")!=null)
+    if(localStorage.getItem("id")!=null)
     {
-      user=JSON.parse(localStorage.getItem("user"));
+      fetchUser();
     }
     fetchGroups();
   },[]);

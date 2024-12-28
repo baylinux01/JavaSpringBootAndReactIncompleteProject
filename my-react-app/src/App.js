@@ -105,6 +105,10 @@ function App() {
     </Users>}>
     </Route>
     <Route exact path="/users/user/:user2Id" element={<User 
+    setConnectionsOfUser={setConnectionsOfUser}
+    connectionsOfUser={connectionsOfUser}
+    connectionRequests={connectionRequests}
+    setConnectionRequests={setConnectionRequests}
     user2={user2} setUser2={setUser2} 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
     user={user} setUser={setUser} password={password} setPassword={setPassword}
