@@ -25,34 +25,34 @@ const{groupId}=useParams();
 
 function fetchGroup(){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/groups/getonegroupbyid",{auth: {username: user.username,password: password},params:{groupId:groupId}}).then((response)=>{setGroup({...response.data})});
+    axios.get("/groups/getonegroupbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroup({...response.data})});
   }
 function fetchComments(){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/comments/getcommentsofagroup",{auth: {username: user.username,password: password},params:{groupId:groupId}}).then((response)=>{setGroupComments([...response.data])});
+    axios.get("/comments/getcommentsofagroup",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroupComments([...response.data])});
   }
   function fetchMembers(){
     axios.defaults.baseURL="http://localhost:8080";
-    return axios.get("/groups/getonegroupmembersbygroupid",{auth: {username: user.username,password: password},params:{groupId:groupId}}).then((response)=>{setGroupMembers([...response.data])});
+    return axios.get("/groups/getonegroupmembersbygroupid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroupMembers([...response.data])});
   }
 
   function fetchUser(){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:user.id}})
+    axios.get("/users/getoneuserbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:user.id}})
     .then((response)=>{setUser({...response.data})});
     console.log(user)
   }
 
   function fetchBannedUsersOfUser(){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/users/getbannedusersofcurrentuser",{auth: {username: user.username,password: password},params:{}})
+    axios.get("/users/getbannedusersofcurrentuser",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{}})
     .then((response)=>{setBannedUsersOfUser([...response.data])});
     
   }
 
   function fetchBannedUsersOfCommentOwner(id){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/users/getbannedusersofauser",{auth: {username: user.username,password: password},params:{userId:id}})
+    axios.get("/users/getbannedusersofauser",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:id}})
     .then((response)=>{setBannedUsersOfCommentOwner([...response.data])});
     
   }
@@ -61,7 +61,7 @@ function fetchComments(){
   {
     axios.defaults.baseURL="http://localhost:8080";
     axios.delete("/comments/deletecomment",
-      {auth: {username: user.username,password: password},params:{commentId:commentId}});
+      {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{commentId:commentId}});
     fetchComments();
     // axios.defaults.baseURL="http://localhost:8080";
     // const qs=require('qs');
@@ -123,8 +123,8 @@ function fetchComments(){
         })
       ,{
         auth: {
-          username: user.username,
-          password: password
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password")
         }
       });
       

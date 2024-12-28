@@ -20,7 +20,7 @@ public class MessageService {
 	MessageRepository messageRepository;
 	
 	@Autowired
-	public MessageService(UserService userService, MessageRepository messageRepository) {
+	public MessageService(UserRepository userRepository, MessageRepository messageRepository) {
 		super();
 		this.userRepository=userRepository;
 		this.messageRepository = messageRepository;

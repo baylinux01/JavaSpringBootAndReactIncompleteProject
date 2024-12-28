@@ -177,7 +177,7 @@ export default function User({connectionsOfUser,setConnectionsOfUser,connectionR
     <div style={{position:"absolute",
     top:"50px",left:"120px"
   }} >{user2.name} {user2.surname}</div>
-    <Button style={{position:"absolute",top:"100px",left:"120px"}} variant="primary" sync="true" >Message</Button>
+    <Link to={"/message/"+user2.id}><Button style={{position:"absolute",top:"100px",left:"120px"}} variant="primary" sync="true" >Message</Button></Link>
     <Button style={{position:"absolute",top:"150px",left:"120px"}} variant="danger" sync="true" onClick={()=>deleteConnection(user2.id)}>Disconnect</Button>
     </div>
     :Object.keys(user).length!=0&&Object.keys(user2).length!==0&&!_.find(connectionsOfUser,user2)&&_.isEqual(conreq1.connectionRequestSender,user)?

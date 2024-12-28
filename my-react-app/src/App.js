@@ -13,6 +13,7 @@ import Register from "./Register";
 import Login from "./Login";
 import GroupCreationPage from './GroupCreationPage';
 import Users from "./Users"
+import Message from './Message';
 import _ from "lodash";
 
 //react'ta lodash kütüphanesi objeleri karşılaştırmaya veya
@@ -38,6 +39,7 @@ function App() {
   const [signupformsubmitresult,setSignupformsubmitresult]=useState("");
   const [user,setUser]=useState({});
   const [users,setUsers]=useState([]);
+  const [messages,setMessages]=useState([]);
   const [connectionRequests,setConnectionRequests]=useState([]);
   const [connectionsOfUser,setConnectionsOfUser]=useState([]);
   const[groups,setGroups]=useState([]);
@@ -114,6 +116,19 @@ function App() {
     user={user} setUser={setUser} password={password} setPassword={setPassword}
     signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult}>
     </User>}></Route>
+
+    <Route exact path="/message/:user2Id" element={<Message
+    messages={messages}
+    setMessages={setMessages}
+    setConnectionsOfUser={setConnectionsOfUser}
+    connectionsOfUser={connectionsOfUser}
+    connectionRequests={connectionRequests}
+    setConnectionRequests={setConnectionRequests}
+    user2={user2} setUser2={setUser2} 
+    unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 
+    user={user} setUser={setUser} password={password} setPassword={setPassword}
+    signupformsubmitresult={signupformsubmitresult} setSignupformsubmitresult={setSignupformsubmitresult}>
+    </Message>}></Route>
 
     <Route exact path="/register" element={<Register 
     unsuccessfulsignin={unsuccessfulsignin} setUnsuccessfulsignin={setUnsuccessfulsignin} 

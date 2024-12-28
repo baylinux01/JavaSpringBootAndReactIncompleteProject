@@ -156,7 +156,7 @@ export default function Users({ connectionsOfUser,setConnectionsOfUser, connecti
          
        }} src={`data:image/*;base64,${u.userImage}`}/>
            <Link to={"/users/user/"+u.id} >{u.name+" "+u.surname}</Link>
-           <Button variant="primary" sync="true" >Message</Button>
+           <Link to={"/message/"+u.id}><Button variant="primary" sync="true" >Message</Button></Link>
            <Button variant="danger" sync="true" onClick={()=>deleteConnection(u.id)}>Disconnect</Button>
             </ListGroupItem>
          :!_.isEqual(u,user) && !_.find(connectionsOfUser,u)&&_.isEqual(conreq1.connectionRequestSender,user)?
