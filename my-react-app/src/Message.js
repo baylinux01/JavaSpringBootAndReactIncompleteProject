@@ -60,6 +60,7 @@ export default function Message({messages,setMessages,connectionsOfUser,setConne
         setNewMessageContent("");
         setMessageToBeQuoted({messageContent:""});
         getMessagesBetweenTwoUsers();
+        window.history.go(0);
       
       }
       function deleteMessage(mId)

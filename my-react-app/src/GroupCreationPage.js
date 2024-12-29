@@ -45,6 +45,7 @@ export default function GroupCreationPage({password,setPassword,user,setUser,gro
       fetchGroups();
       fetchUser();
       
+      
       navigate("/");
       //react'ta bir objenin null olup olmadığını kontrol etmek için Object.keys(obje).length===0 kullanılıyor.
       //react'ta objeyi setter ile güncellerken özel bir kullanım var

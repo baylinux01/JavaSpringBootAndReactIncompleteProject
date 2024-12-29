@@ -17,6 +17,7 @@ export default function Home(
     axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
       {setGroups([...response.data]);});
+    
   }
 
   function fetchUser(){
@@ -33,8 +34,10 @@ export default function Home(
     {
       fetchUser();
       
+      
     }
     fetchGroups();
+   
     
   },[]);
 
@@ -50,8 +53,7 @@ export default function Home(
         {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}});
       
       fetchGroups();
-       
-       
+
       }
 
       function joinGroup(groupId,userId)
