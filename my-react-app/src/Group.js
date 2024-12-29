@@ -21,6 +21,7 @@ const[groupMembers,setGroupMembers]=useState([]);
 const[groupComments,setGroupComments]=useState([]);
 const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
 const [showPopUp,setShowPopUp]=useState(false);
+const [commentContentToBeEdited,setCommentContentToBeEdited]=useState("");
 
 const{groupId}=useParams();
 
@@ -39,7 +40,7 @@ function fetchComments(){
 
   function fetchUser(){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/users/getoneuserbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:user.id}})
+    axios.get("/users/getoneuserbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:localStorage.getItem("id")}})
     .then((response)=>{setUser({...response.data})});
     console.log(user)
   }
@@ -76,13 +77,34 @@ function fetchComments(){
     //   }
     // });
   }
-
+  function editCommentContent(mId,newContent)
+  {
+      
+      
+    //axios kütüphanesi npm install axios kodu ile indirilebilir.
+   const params=new URLSearchParams();
+   params.append("commentId",mId);
+   params.append("newcontent",newContent);
+   axios.defaults.baseURL="http://localhost:8080";
+   axios.put("/comments/updatecomment",params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
+  // axios.put("/messages/editmessagecontent", null, {
+  //   headers: {
+  //     'Authorization': 'Basic ' + btoa(localStorage.getItem("username") + ':' + localStorage.getItem("password"))
+  //   },
+  //   params: params
+  // });
+  
+  fetchComments();
+  setShowPopUp(false);
+  window.history.go(0);
+   
+  }
 
     useEffect(()=> {
 
      
     
-
+         fetchUser();
         fetchGroup();
         fetchComments();
         //fetchMembers(); 
@@ -137,6 +159,7 @@ function fetchComments(){
       fetchBannedUsersOfUser();
       setNewCommentContent("");
       setCommentToBeQuoted({content:""});
+      window.history.go(0);
     
     }
     
@@ -178,8 +201,24 @@ function fetchComments(){
             setCommentToBeQuoted({...comment}):
         setCommentToBeQuoted(null)}>Quote</Button>
           :<div></div>}
-    {_.isEqual(comment.owner,user)|| user.roles.includes("ADMIN")?
+    {_.isEqual(comment.owner,user)?
+    <div style={{display:"flex",columnGap:"10px", justifyContent:"end"}}>
+      <Button variant="warning" sync="true" onClick={()=>{setShowPopUp(true)}}>Edit</Button>
           <Button variant="danger" sync="true" onClick={()=>deleteComment(comment.id)}>Delete</Button>
+          <Modal show={showPopUp} onHide={()=>setShowPopUp(false)}>
+    <Modal.Header>
+      <Modal.Title>Edit Message</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <input type='text' id='newcontent' onChange={(e)=>setCommentContentToBeEdited(e.target.value)}></input>
+      
+    </Modal.Body>
+    <Modal.Footer>
+    <Button variant='primary' onClick={()=>{editCommentContent(comment.id,commentContentToBeEdited)}}>Edit Comment</Button>
+    <Button variant='primary' onClick={()=>{setShowPopUp(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
+          </div> 
           :<div></div>}
       </ListGroup>
       </div>
