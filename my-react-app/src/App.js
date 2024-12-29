@@ -11,7 +11,6 @@ import Group from "./Group";
 import User from "./User";
 import Register from "./Register";
 import Login from "./Login";
-import GroupCreationPage from './GroupCreationPage';
 import Users from "./Users"
 import Message from './Message';
 import _ from "lodash";
@@ -85,14 +84,7 @@ function App() {
     bannedUsersOfUser={bannedUsersOfUser} setBannedUsersOfUser={setBannedUsersOfUser}>
     </Group>}></Route>
 
-    <Route exact path="/groupcreationpage" 
-    element=
-    {
-    <GroupCreationPage 
-    user={user} setUser={setUser} password={password} setPassword={setPassword} groups={groups} setGroups={setGroups}>
-    </GroupCreationPage>
-    }>
-    </Route>
+    
     <Route
     exact path='/users/users' element={<Users
       setConnectionsOfUser={setConnectionsOfUser}

@@ -12,7 +12,8 @@ export default function Home(
   
   const [showPopUp,setShowPopUp]=useState(false);
   const[file,setFile]=useState(null);
-  
+  const [showPopUp2,setShowPopUp2]=useState(false);
+  const [newGroupName,setNewGroupName]=useState("");
   function fetchGroups(){
     axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
@@ -133,7 +134,36 @@ export default function Home(
          
   }
  
-
+  function createthegroup()
+    {
+        
+        
+      //axios kütüphanesi npm install axios kodu ile indirilebilir.
+      //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.qs kullanmayınca veriler api'ya null gidiyor
+      axios.defaults.baseURL="http://localhost:8080";
+      const qs=require('qs');
+      axios.post("/groups/creategroup", 
+        qs.stringify( {ownerId: user.id,
+        name: newGroupName})
+      ,{
+        auth: {
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password")
+        }
+      });
+      
+      fetchGroups();
+      fetchUser();
+      setShowPopUp2(false);
+      window.history.go(0);
+      
+      
+      
+      //react'ta bir objenin null olup olmadığını kontrol etmek için Object.keys(obje).length===0 kullanılıyor.
+      //react'ta objeyi setter ile güncellerken özel bir kullanım var
+      //obje setObject(object=>({...object,...updatedValue})) şeklinde güncellenir.
+       
+    }
   
   return (
     <>
@@ -242,8 +272,20 @@ export default function Home(
        </div>
 )}
    </div>
-      <Link to={"/groupcreationpage"}><Button variant="primary" 
-          >Create New Group</Button></Link>
+   <Modal show={showPopUp2} onHide={()=>setShowPopUp2(false)}>
+    <Modal.Header>
+      <Modal.Title>Create New Group</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <input type='text' id='newmessageContent' onChange={(e)=>setNewGroupName(e.target.value)}></input>
+      
+    </Modal.Body>
+    <Modal.Footer>
+    <Button variant='primary' onClick={()=>{createthegroup()}}>Create Group</Button>
+    <Button variant='primary' onClick={()=>{setShowPopUp2(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
+      <Button variant="primary" onClick={()=>setShowPopUp2(true)}>Create New Group</Button>
       </div>
        : <div>Home</div>
     }

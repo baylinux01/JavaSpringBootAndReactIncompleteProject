@@ -36,10 +36,11 @@ export default function Users({ connectionsOfUser,setConnectionsOfUser, connecti
         if(localStorage.getItem("id")!=null)
             {
               fetchUser();
+              getAllConnectionRequests();
+              getAllConnectionsOfCurrentUser();
             }
        fetchUsers();
-       getAllConnectionRequests();
-       getAllConnectionsOfCurrentUser();
+       
      
        
      }, [])
