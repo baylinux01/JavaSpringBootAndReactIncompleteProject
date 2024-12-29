@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from "lodash";
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Modal, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 
 
@@ -20,6 +20,7 @@ const[commentToBeQuoted,setCommentToBeQuoted]=useState({content:""});
 const[groupMembers,setGroupMembers]=useState([]);
 const[groupComments,setGroupComments]=useState([]);
 const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
+const [showPopUp,setShowPopUp]=useState(false);
 
 const{groupId}=useParams();
 

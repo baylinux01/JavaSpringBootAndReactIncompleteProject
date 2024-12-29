@@ -7,11 +7,15 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from "lodash";
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Modal,ListGroup, ListGroupItem } from 'react-bootstrap';
 
 export default function Message({messages,setMessages,connectionsOfUser,setConnectionsOfUser,connectionRequests,setConnectionRequests,password,setPassword,user2,setUser2,user,setUser}) {
     const [newMessageContent,setNewMessageContent]=useState("");
     const [messageToBeQuoted,setMessageToBeQuoted]=useState({messageContent:""});
+    const [showPopUp,setShowPopUp]=useState(false);
+    const [messageContentToBeEdited,setMessageContentToBeEdited]=useState("");
+    const[messageToBeEdited,setMessageToBeEdited]=useState({messageContent:""});
+    
     const{user2Id}=useParams();
     const fetchUser=()=>{
       axios.defaults.baseURL="http://localhost:8080";
@@ -72,6 +76,28 @@ export default function Message({messages,setMessages,connectionsOfUser,setConne
        
        
       }
+      function editMessageContent(mId,newContent)
+      {
+          
+          
+        //axios kütüphanesi npm install axios kodu ile indirilebilir.
+       const params=new URLSearchParams();
+       params.append("messageId",mId);
+       params.append("newMessageContent",newContent);
+       axios.defaults.baseURL="http://localhost:8080";
+       axios.put("/messages/editmessagecontent",params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
+      // axios.put("/messages/editmessagecontent", null, {
+      //   headers: {
+      //     'Authorization': 'Basic ' + btoa(localStorage.getItem("username") + ':' + localStorage.getItem("password"))
+      //   },
+      //   params: params
+      // });
+      
+      getMessagesBetweenTwoUsers();
+      setShowPopUp(false);
+      window.history.go(0);
+       
+      }
 
     useEffect(() => {
         if(localStorage.getItem("id")!=null)
@@ -96,14 +122,27 @@ export default function Message({messages,setMessages,connectionsOfUser,setConne
 
                 {m.quotedMessage!=null?
                 <div>
-                <div>{m.quotedMessage.messageSender.username}: {m.quotedMessage.messageContent}</div>
+                <div style={{border:"1px solid black", width:"auto",display:"inline-block"}}>{m.quotedMessage.messageSender.username}: {m.quotedMessage.messageContent}</div>
                 <div>{m.messageSender.username}:  {m.messageContent}</div>
                 <div style={{display:'flex',columnGap:"10px"}}>
                 <Button onClick={()=>{setMessageToBeQuoted({...m})}}>Quote</Button>
                 {_.isEqual(m.messageSender,user)?
                     <div style={{display:'flex',columnGap:"10px"}}>
-                    <Button variant="warning" onClick={()=>{}}>Edit</Button>
+                    <Button variant="warning" onClick={()=>{setShowPopUp(true)}}>Edit</Button>
                     <Button variant="danger" onClick={()=>{deleteMessage(m.id)}}>Delete</Button>
+                    <Modal show={showPopUp} onHide={()=>setShowPopUp(false)}>
+    <Modal.Header>
+      <Modal.Title>Edit Message</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <input type='text' id='newmessageContent' onChange={(e)=>setMessageContentToBeEdited(e.target.value)}></input>
+      
+    </Modal.Body>
+    <Modal.Footer>
+    <Button variant='primary' onClick={()=>{editMessageContent(m.id,messageContentToBeEdited)}}>Edit Message</Button>
+    <Button variant='primary' onClick={()=>{setShowPopUp(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
                     </div>:
                     <div></div>
                 }
@@ -118,8 +157,21 @@ export default function Message({messages,setMessages,connectionsOfUser,setConne
                 <Button onClick={()=>{setMessageToBeQuoted({...m})}}>Quote</Button>
                 {_.isEqual(m.messageSender,user)?
                     <div style={{display:'flex',columnGap:"10px"}}>
-                    <Button variant="warning" onClick={()=>{}}>Edit</Button>
+                    <Button variant="warning" onClick={()=>{setShowPopUp(true)}}>Edit</Button>
                     <Button variant="danger" onClick={()=>{deleteMessage(m.id)}}>Delete</Button>
+                    <Modal show={showPopUp} onHide={()=>setShowPopUp(false)}>
+    <Modal.Header>
+      <Modal.Title>Edit Message</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <input type='text' id='newmessageContent' onChange={(e)=>setMessageContentToBeEdited(e.target.value)}></input>
+      
+    </Modal.Body>
+    <Modal.Footer>
+    <Button variant='primary' onClick={()=>{editMessageContent(m.id,messageContentToBeEdited)}}>Edit Message</Button>
+    <Button variant='primary' onClick={()=>{setShowPopUp(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
                     </div>:
                     <div></div>
                 }
@@ -127,7 +179,7 @@ export default function Message({messages,setMessages,connectionsOfUser,setConne
                 <div>....</div>
                 </div>}
 
-
+                
                 </div>
             );
                

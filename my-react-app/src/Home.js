@@ -12,6 +12,7 @@ export default function Home(
   
   const [showPopUp,setShowPopUp]=useState(false);
   const[file,setFile]=useState(null);
+  
   function fetchGroups(){
     axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
@@ -31,8 +32,10 @@ export default function Home(
     if(localStorage.getItem("id")!=null)
     {
       fetchUser();
+      
     }
     fetchGroups();
+    
   },[]);
 
 
@@ -124,8 +127,9 @@ export default function Home(
           fetchUser();
          fetchGroups();
          setShowPopUp(false);
-        }
-
+         window.history.go(0);
+         
+  }
  
 
   

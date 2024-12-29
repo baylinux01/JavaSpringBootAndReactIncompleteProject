@@ -44,7 +44,7 @@ export default function Groups(
       
        axios.defaults.baseURL="http://localhost:8080";
        axios.delete("/groups/deletegroupbyid",
-        {auth: {username: user.username,password: password},params:{groupId:groupId}});
+        {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}});
       
       fetchGroups();
        
@@ -67,8 +67,8 @@ export default function Groups(
         })
       ,{
         auth: {
-          username: user.username,
-          password: password
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password")
         }
       });
          fetchGroups();
@@ -90,8 +90,8 @@ export default function Groups(
         })
       ,{
         auth: {
-          username: user.username,
-          password: password
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password")
         }
       });
            fetchGroups();
