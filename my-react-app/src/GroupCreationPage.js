@@ -20,7 +20,7 @@ export default function GroupCreationPage({password,setPassword,user,setUser,gro
 
   function fetchUser(){
     axios.defaults.baseURL="http://localhost:8080";
-    axios.get("/users/getoneuserbyid",{auth: {username: user.username,password: password},params:{userId:user.id}})
+    axios.get("/users/getoneuserbyid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:user.id}})
     .then((response)=>{setUser({...response.data})});
   }
 
@@ -37,8 +37,8 @@ export default function GroupCreationPage({password,setPassword,user,setUser,gro
         name: newGroupName})
       ,{
         auth: {
-          username: user.username,
-          password: password
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password")
         }
       });
       

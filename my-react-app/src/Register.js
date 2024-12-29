@@ -27,7 +27,7 @@ function handlesignupformsubmit(e,signupformsubmitresult){
     //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.qs kullanmayınca veriler api'ya null gidiyor
      const qs=require('qs');
      axios.defaults.baseURL="http://localhost:8080";
-     axios.post("/users/adduser",qs.stringify({name:name,surname:surname,username:username,password:password,birthdate:birthDate}))
+     axios.post("/users/createuser",qs.stringify({name:name,surname:surname,username:username,password:password,birthdate:birthDate}))
     .then((response)=>{setSignupformsubmitresult(response.data);
       if(response.data=='Registration is successful'){navigate("/login")}});
     

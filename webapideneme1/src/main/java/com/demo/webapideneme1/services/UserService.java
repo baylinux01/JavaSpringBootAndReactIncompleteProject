@@ -520,6 +520,7 @@ public class UserService {
 			else 
 			{
 				user.setUserImage(newuserimage.getBytes());
+				userRepository.save(user);
 				return "userimage successfully changed";
 			}
 		}

@@ -2,7 +2,7 @@ import React, { useEffect,useState } from 'react';
 import {useParams,useNavigate,Link} from "react-router-dom";
 import axios from "axios";
 import _ from "lodash";
-import { Table,Button, ListGroup } from 'react-bootstrap';
+import { Modal,Table,Button, ListGroup } from 'react-bootstrap';
 
 
 export default function Home(
@@ -10,7 +10,8 @@ export default function Home(
     user,setUser,unsuccessfulsignin,setUnsuccessfulsignin}
   ) {
   
-
+  const [showPopUp,setShowPopUp]=useState(false);
+  const[file,setFile]=useState(null);
   function fetchGroups(){
     axios.defaults.baseURL="http://localhost:8080";
     axios.get("/groups/getallgroups").then((response)=>
@@ -96,6 +97,35 @@ export default function Home(
          fetchGroups();
         }
 
+        function changePhoto()
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         const formData=new FormData();
+         formData.append("newuserimage",file);
+
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.put("/users/changeuserimage", 
+      formData,{
+        headers:{
+          "Content-Type":"multipart/form-data"
+        }
+      
+    ,
+      auth: {
+        username: localStorage.getItem("username"),
+        password: localStorage.getItem("password")
+      }
+    }).then(response=>console.log(response.data));
+          fetchUser();
+         fetchGroups();
+         setShowPopUp(false);
+        }
+
  
 
   
@@ -103,12 +133,31 @@ export default function Home(
     <>
     <div>
       {Object.keys(user).length!==0?
+      <div>
       <img style={{position:"absolute",height:"385px",width:"400px",
         top:"160px",left:"100px"
-      }} src={`data:image/*;base64,${user.userImage}`}/>:
+      }} src={`data:image/*;base64,${user.userImage}`}/>
+       <Button style={{position:"absolute",top:"100px",left:"100px"}} variant="primary" onClick={()=>setShowPopUp(true)}>Change Photo</Button>
+      </div>
+      :
       <div></div>
     }
+   
+    <Modal show={showPopUp} onHide={()=>setShowPopUp(false)}>
+    <Modal.Header>
+      <Modal.Title>Change Photo</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <input type='file' id='file' onChange={(e)=>setFile(e.target.files[0])}></input>
+      
+    </Modal.Body>
+    <Modal.Footer>
+    <Button variant='primary' onClick={()=>{changePhoto()}}>Change Photo</Button>
+    <Button variant='primary' onClick={()=>{setShowPopUp(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
     </div>
+    
     <div style={{ marginTop:"100px",marginLeft:"550px",
     width:"400px",minHeight:"500px",height:"auto",textDecoration:"none"}}>
       {
