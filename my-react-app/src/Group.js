@@ -21,6 +21,7 @@ const[groupMembers,setGroupMembers]=useState([]);
 const[groupComments,setGroupComments]=useState([]);
 const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
 const [showPopUp,setShowPopUp]=useState(false);
+const [showPopUp2,setShowPopUp2]=useState(false);
 const [commentContentToBeEdited,setCommentContentToBeEdited]=useState("");
 
 const{groupId}=useParams();
@@ -107,10 +108,9 @@ function fetchComments(){
          fetchUser();
         fetchGroup();
         fetchComments();
-        //fetchMembers(); 
-        //fetchUser();  
-        //fetchBannedUsersOfUser();
-        //fetchBannedUsersOfCommentOwner();
+        fetchMembers();   
+        fetchBannedUsersOfUser();
+        
         
      },[]);
 
@@ -175,6 +175,7 @@ function fetchComments(){
   return (
     
         <div style={disdiv}>
+          <Button variant='warning' onClick={()=>setShowPopUp2(true)}>See Members</Button>
         <div style={baslik}>{group.name}</div>
         {groupComments.map(comment=>
         <div>
@@ -263,7 +264,29 @@ function fetchComments(){
           </Form.Group>
         </Form>
             :<div></div>}
-        
+        <Modal show={showPopUp2} onHide={()=>setShowPopUp2(false)}>
+    <Modal.Header>
+      <Modal.Title>Members</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      {groupMembers.map(member=>
+      <div style={{display:"flex",columnGap:"10px"}}>
+        <div>{member.name} {member.surname}</div>
+        {_.isEqual(user,group.owner)?
+        <Button variant='warning'>Change Permissions</Button>
+      :<div></div>
+      }
+      </div>
+
+)}
+      
+    </Modal.Body>
+    <Modal.Footer>
+    
+    <Button variant='primary' onClick={()=>{setShowPopUp2(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
+    
         </div>
     
     

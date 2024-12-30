@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useCallback, useEffect,useState } from 'react';
 import {useParams,useNavigate,Link} from "react-router-dom";
 import axios from "axios";
 import _ from "lodash";
@@ -42,7 +42,7 @@ export default function Home(
     
   },[]);
 
-
+   
   function deleteGroup(groupId)
       {
           
@@ -54,7 +54,7 @@ export default function Home(
         {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}});
       
       fetchGroups();
-
+        
       }
 
       function joinGroup(groupId,userId)

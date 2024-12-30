@@ -89,42 +89,14 @@ public class GroupController {
 	@PostMapping("/beamemberofgroup")
 	public String beAMemberOfGroup(HttpServletRequest request,long groupId)
 	{
-		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
-		Principal pl=request.getUserPrincipal();
-		String username=pl.getName();
-		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
-		User user=userService.getOneUserByUsername(username);
-		Group group=groupService.getOneGroupById(groupId);
-		if(group!=null&&user!=null)
-		{
-			if(group.getOwner()!=user&&!group.getMembers().contains(user))
-			{
-				group.getMembers().add(user);
-				groupService.saveGroup(group);
-				return "Process is successful";
-			}
-			else return "User is already a member or owner of the group";
-		}else return "Group not found";
+		return groupService.beAMemberOfGroup(request,groupId);
+		
 	}
 	@PostMapping("/exitgroup")
 	public String exitGroup(HttpServletRequest request,long groupId)
 	{
-		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
-		Principal pl=request.getUserPrincipal();
-		String username=pl.getName();
-		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
-		User user=userService.getOneUserByUsername(username);
-		Group group=groupService.getOneGroupById(groupId);
-		if(group!=null&&user!=null)
-		{
-			if(group.getOwner()!=user&&group.getMembers().contains(user))
-			{
-				group.getMembers().remove(user);
-				groupService.saveGroup(group);
-				return "Process is successful";
-			}
-			else return "User is the owner or not a member of the group";
-		}else return "Group not found";
+		return groupService.exitGroup(request,groupId);
+		
 	}
 	
      

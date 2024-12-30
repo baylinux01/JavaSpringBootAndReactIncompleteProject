@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.demo.webapideneme1.models.Comment;
 import com.demo.webapideneme1.models.Group;
 import com.demo.webapideneme1.models.User;
+import com.demo.webapideneme1.models.UserGroupPermission;
 import com.demo.webapideneme1.repositories.CommentRepository;
 import com.demo.webapideneme1.repositories.GroupRepository;
+import com.demo.webapideneme1.repositories.UserGroupPermissionRepository;
 import com.demo.webapideneme1.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,14 +25,17 @@ public class GroupService {
 	GroupRepository groupRepository;
 	UserRepository userRepository;
 	CommentRepository commentRepository;
+	UserGroupPermissionRepository userGroupPermissionRepository;
 	
 	@Autowired
-	public GroupService(GroupRepository groupRepository, 
-			UserRepository userRepository,CommentRepository commentRepository) {
+	public GroupService(GroupRepository groupRepository
+			,UserRepository userRepository,CommentRepository commentRepository
+			,UserGroupPermissionRepository userGroupPermissionRepository) {
 		super();
 		this.groupRepository = groupRepository;
 		this.userRepository = userRepository;
 		this.commentRepository=commentRepository;
+		this.userGroupPermissionRepository=userGroupPermissionRepository;
 	}
 
 	public Group getOneGroupById(Long groupId) {
@@ -132,6 +137,17 @@ public class GroupService {
 				members.add(owner);
 				group.setMembers(members);
 			}
+			UserGroupPermission usgrpe=userGroupPermissionRepository.findByUserAndGroup(owner,group);
+			if(usgrpe==null)
+			{
+				UserGroupPermission ugp=new UserGroupPermission();
+				ugp.setUser(owner);
+				ugp.setGroup(group);
+				String per=ugp.getPermissions();
+				per+="-ADDUSER-BANUSER";
+				ugp.setPermissions(per);
+				userGroupPermissionRepository.save(ugp);
+			}
 			 
 			group.setName(name);
 			groupRepository.save(group);
@@ -154,6 +170,53 @@ public class GroupService {
 			return "Group name successfully updated";
 		}
 		return "Group name cannot be updated";
+	}
+
+	@Transactional
+	public String beAMemberOfGroup(HttpServletRequest request, long groupId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
+		Group group=groupRepository.findById(groupId).orElse(null);
+		if(group!=null&&user!=null)
+		{
+			if(group.getOwner()!=user&&!group.getMembers().contains(user))
+			{
+				UserGroupPermission usgrpe=userGroupPermissionRepository.findByUserAndGroup(user,group);
+				if(usgrpe==null)
+				{
+					UserGroupPermission ugp=new UserGroupPermission();
+					ugp.setUser(user);
+					ugp.setGroup(group);
+					userGroupPermissionRepository.save(ugp);
+				}
+				group.getMembers().add(user);
+				groupRepository.save(group);
+				return "Process is successful";
+			}
+			else return "User is already a member or owner of the group";
+		}else return "Group not found";
+	}
+
+	public String exitGroup(HttpServletRequest request, long groupId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user=userRepository.findByUsername(username);
+		Group group=groupRepository.findById(groupId).orElse(null);
+		if(group!=null&&user!=null)
+		{
+			if(group.getOwner()!=user&&group.getMembers().contains(user))
+			{
+				group.getMembers().remove(user);
+				groupRepository.save(group);
+				return "Process is successful";
+			}
+			else return "User is the owner or not a member of the group";
+		}else return "Group not found";
 	}
 	
 
