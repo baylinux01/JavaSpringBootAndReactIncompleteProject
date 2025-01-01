@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.demo.webapideneme1.models.Comment;
 import com.demo.webapideneme1.models.Group;
 import com.demo.webapideneme1.models.User;
+import com.demo.webapideneme1.models.UserGroupPermission;
 import com.demo.webapideneme1.repositories.CommentRepository;
 import com.demo.webapideneme1.repositories.GroupRepository;
+import com.demo.webapideneme1.repositories.UserGroupPermissionRepository;
 import com.demo.webapideneme1.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,16 +25,19 @@ public class CommentService {
 	CommentRepository commentRepository;
 	UserRepository userRepository;
 	GroupRepository groupRepository;
+	UserGroupPermissionRepository userGroupPermissionRepository;
 
 	
 	@Autowired
 	public CommentService(CommentRepository commentRepository
 			,UserRepository userRepository
-			,GroupRepository groupRepository) {
+			,GroupRepository groupRepository
+			,UserGroupPermissionRepository userGroupPermissionRepository) {
 		super();
 		this.commentRepository = commentRepository;
 		this.userRepository=userRepository;
 		this.groupRepository=groupRepository;
+		this.userGroupPermissionRepository=userGroupPermissionRepository;
 	}
 
 	public String saveComment(Comment comment) {
@@ -100,22 +105,32 @@ public class CommentService {
 				&& group.getMembers().contains(user)
 		)
 		{
-			comment=new Comment();
-			comment.setOwner(user);
-			comment.setGroup(group);
-			comment.setContent(content);
-			if(commentToBeQuoted!=null)
+			UserGroupPermission ugp=userGroupPermissionRepository.findByUserAndGroup(user, group);
+			String permissions=ugp.getPermissions();
+			if(permissions.contains("SENDMESSAGE"))
 			{
-				if(!commentToBeQuoted.getOwner().getBannedUsers().contains(user)
-						&&!user.getBannedUsers().contains(commentToBeQuoted.getOwner()))
+				comment=new Comment();
+				comment.setOwner(user);
+				comment.setGroup(group);
+				comment.setContent(content);
+				if(commentToBeQuoted!=null)
 				{
-					if(commentToBeQuoted.getGroup()==group)
-					comment.setQuotedComment(commentToBeQuoted);
-				}else comment.setQuotedComment(null);
+					if(!commentToBeQuoted.getOwner().getBannedUsers().contains(user)
+							&&!user.getBannedUsers().contains(commentToBeQuoted.getOwner()))
+					{
+						if(commentToBeQuoted.getGroup()==group)
+						comment.setQuotedComment(commentToBeQuoted);
+					}else comment.setQuotedComment(null);
+				}
+				else comment.setQuotedComment(null);
+				commentRepository.save(comment);
+				return "comment successfully created";
 			}
-			else comment.setQuotedComment(null);
-			commentRepository.save(comment);
-			return "comment successfully created";
+			else
+			{
+				return "userGroupPermissions object not found";
+			}
+			
 			
 		} else return "User or group not found";
 		

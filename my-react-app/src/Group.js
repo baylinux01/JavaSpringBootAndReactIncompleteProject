@@ -22,6 +22,10 @@ const[groupComments,setGroupComments]=useState([]);
 const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
 const [showPopUp,setShowPopUp]=useState(false);
 const [showPopUp2,setShowPopUp2]=useState(false);
+const [showPopUp3,setShowPopUp3]=useState(false);
+const [user3Id,setUser3Id]=useState();
+const [permissionsOfAUserForAGroup,setPermissionsOfAUserForAGroup]=useState("");
+const [permissionsOfCurrentUserForAGroup,setPermissionsOfCurrentUserForAGroup]=useState("");
 const [commentContentToBeEdited,setCommentContentToBeEdited]=useState("");
 
 const{groupId}=useParams();
@@ -59,7 +63,19 @@ function fetchComments(){
     .then((response)=>{setBannedUsersOfCommentOwner([...response.data])});
     
   }
-
+  function fetchPermissionsOfAUserForAGroup(id){
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/usergrouppermissions/getpermissionsofauserforagroup",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:id,groupId:groupId}})
+    .then((response)=>{setPermissionsOfAUserForAGroup(response.data)});
+    
+  }
+  function fetchPermissionsOfCurrentUserForAGroup(){
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/usergrouppermissions/getpermissionsofauserforagroup",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{userId:localStorage.getItem("id"),groupId:groupId}})
+    .then((response)=>{setPermissionsOfCurrentUserForAGroup(response.data)});
+    console.log(permissionsOfCurrentUserForAGroup);
+    
+  }
   function deleteComment(commentId)
   {
     axios.defaults.baseURL="http://localhost:8080";
@@ -101,6 +117,38 @@ function fetchComments(){
    
   }
 
+  function addSendMessagePermission(id)
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         const params=new URLSearchParams();
+         params.append("userId",id);
+         params.append("groupId",groupId);
+
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.put("/usergrouppermissions/addsendmessagepermission", 
+      params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
+    }
+    function removeSendMessagePermission(id)
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         const params=new URLSearchParams();
+         params.append("userId",id);
+         params.append("groupId",groupId);
+
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.put("/usergrouppermissions/removesendmessagepermission", 
+      params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
+    }
     useEffect(()=> {
 
      
@@ -110,6 +158,7 @@ function fetchComments(){
         fetchComments();
         fetchMembers();   
         fetchBannedUsersOfUser();
+        fetchPermissionsOfCurrentUserForAGroup();
         
         
      },[]);
@@ -237,7 +286,7 @@ function fetchComments(){
        </div>
        :<div></div>}
         
-         {_.find(group.members,user)?
+         {_.find(group.members,user)&&permissionsOfCurrentUserForAGroup.includes("SENDMESSAGE")?
             <Form sync="true" onSubmit={(e)=>handlenewcomment(e)}>
             {/* <Form action='http://localhost:8083/users/enteruser' method='post'> */}
     
@@ -263,7 +312,7 @@ function fetchComments(){
             </Col>
           </Form.Group>
         </Form>
-            :<div></div>}
+            :<div>The owner or admins of this group have restricted your ability to type comments</div>}
         <Modal show={showPopUp2} onHide={()=>setShowPopUp2(false)}>
     <Modal.Header>
       <Modal.Title>Members</Modal.Title>
@@ -273,7 +322,7 @@ function fetchComments(){
       <div style={{display:"flex",columnGap:"10px"}}>
         <div>{member.name} {member.surname}</div>
         {_.isEqual(user,group.owner)?
-        <Button variant='warning'>Change Permissions</Button>
+        <Button variant='warning' onClick={()=>{setUser3Id(member.id);fetchPermissionsOfAUserForAGroup(member.id);setShowPopUp3(true)}}>Change Permissions</Button>
       :<div></div>
       }
       </div>
@@ -284,6 +333,49 @@ function fetchComments(){
     <Modal.Footer>
     
     <Button variant='primary' onClick={()=>{setShowPopUp2(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
+
+    <Modal show={showPopUp3} onHide={()=>setShowPopUp3(false)}>
+    <Modal.Header>
+      <Modal.Title>Permissions</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <div>
+      {permissionsOfAUserForAGroup.includes("SENDMESSAGE")?
+      <label>
+        <input type='checkbox' defaultChecked={true} onChange={()=>{removeSendMessagePermission(user3Id);fetchPermissionsOfAUserForAGroup(user3Id)}}>
+        </input>
+        SEND MESSAGE
+      </label>
+      :
+      <label>
+        <input type='checkbox' defaultChecked={false} onChange={()=>{addSendMessagePermission(user3Id);fetchPermissionsOfAUserForAGroup(user3Id)}}>
+        </input>
+        SEND MESSAGE
+      </label>
+    }
+    <span style={{marginLeft:"10px"}}></span>
+    {permissionsOfAUserForAGroup.includes("SENDMEDIA")?
+      <label>
+        <input type='checkbox' defaultChecked={true}>
+        </input>
+        SEND MEDIA
+      </label>
+      :
+      <label>
+        <input type='checkbox' defaultChecked={false}>
+        </input>
+        SEND MEDIA
+      </label>
+    }
+      </div>
+
+      
+    </Modal.Body>
+    <Modal.Footer>
+    
+    <Button variant='primary' onClick={()=>{fetchPermissionsOfAUserForAGroup(user3Id);setShowPopUp3(false)}}>Close Pop-Up</Button>
     </Modal.Footer>
     </Modal>
     
