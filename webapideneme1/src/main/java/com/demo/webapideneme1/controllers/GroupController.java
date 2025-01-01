@@ -1,6 +1,7 @@
 package com.demo.webapideneme1.controllers;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +71,11 @@ public class GroupController {
 		return group.getMembers();
 	}
 	@PostMapping("/creategroup")
-	public String createGroup(HttpServletRequest request,String name)
+	public String createGroup(HttpServletRequest request,String name)  
 	{
-		return groupService.createGroup(request,name);
+		
+			return groupService.createGroup(request, name);
+		
 	}
 	@PutMapping("/updategroupname")
 	public String updateGroupName(HttpServletRequest request,long groupId,String newgroupname)

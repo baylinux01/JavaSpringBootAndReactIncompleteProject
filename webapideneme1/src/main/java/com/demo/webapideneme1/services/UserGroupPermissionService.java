@@ -40,15 +40,15 @@ public class UserGroupPermissionService {
 		Group group=groupRepository.findById(groupId).orElse(null);
 		if(user1!=null&&user2!=null&&group!=null&&group.getOwner()==user1)
 		{
-			UserGroupPermission ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
-			if(ugp!=null)
+			List<UserGroupPermission> ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
+			if(ugp.size()==1)
 			{
-				String permissions=ugp.getPermissions();
+				String permissions=ugp.get(0).getPermissions();
 				if(!permissions.contains("SENDMESSAGE"))
 				permissions="SENDMESSAGE"+permissions;
 				permissions=permissions.replaceAll("--", "-");
-				ugp.setPermissions(permissions);
-				userGroupPermissionRepository.save(ugp);
+				ugp.get(0).setPermissions(permissions);
+				userGroupPermissionRepository.save(ugp.get(0));
 				return "SENDMESSAGE permission successfully added";
 			}
 			else
@@ -69,16 +69,16 @@ public class UserGroupPermissionService {
 		Group group=groupRepository.findById(groupId).orElse(null);
 		if(user1!=null&&user2!=null&&group!=null&&group.getOwner()==user1)
 		{
-			UserGroupPermission ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
-			if(ugp!=null)
+			List<UserGroupPermission> ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
+			if(ugp.size()==1)
 			{
-				String permissions=ugp.getPermissions();
+				String permissions=ugp.get(0).getPermissions();
 				if(permissions.contains("SENDMESSAGE"))
 				permissions=permissions.replaceAll("-SENDMESSAGE","");
 				permissions=permissions.replaceAll("SENDMESSAGE","");
 				permissions=permissions.replaceAll("--", "-");
-				ugp.setPermissions(permissions);
-				userGroupPermissionRepository.save(ugp);
+				ugp.get(0).setPermissions(permissions);
+				userGroupPermissionRepository.save(ugp.get(0));
 				return "SENDMESSAGE permission successfully removed";
 			}
 			else
@@ -99,10 +99,10 @@ public class UserGroupPermissionService {
 		Group group=groupRepository.findById(groupId).orElse(null);
 		if(user1!=null&&user2!=null&&group!=null)
 		{
-			UserGroupPermission ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
-			if(ugp!=null)
+			List<UserGroupPermission> ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
+			if(ugp.size()==1)
 			{
-				String permissions=ugp.getPermissions();
+				String permissions=ugp.get(0).getPermissions();
 				
 				return permissions;
 			}

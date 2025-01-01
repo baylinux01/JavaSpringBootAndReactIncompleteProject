@@ -27,6 +27,7 @@ const [user3Id,setUser3Id]=useState();
 const [permissionsOfAUserForAGroup,setPermissionsOfAUserForAGroup]=useState("");
 const [permissionsOfCurrentUserForAGroup,setPermissionsOfCurrentUserForAGroup]=useState("");
 const [commentContentToBeEdited,setCommentContentToBeEdited]=useState("");
+const[file,setFile]=useState(null);
 
 const{groupId}=useParams();
 
@@ -149,6 +150,60 @@ function fetchComments(){
     axios.put("/usergrouppermissions/removesendmessagepermission", 
       params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
     }
+    function readFile(f)
+    {
+      return new Promise((resolve,reject)=>{
+        let reader=new FileReader();
+        reader.addEventListener("loadend",e=>resolve(e.target.result))
+        reader.addEventListener("error",reject)
+        reader.readAsArrayBuffer(f);
+      })
+    }
+    async function getBytes(fi)
+    {
+      return new Uint8Array(await readFile(fi));
+    }
+    function sendMediaToAGroup()
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         
+          // const bytes=getBytes(file);
+          
+          // const name=file.name;
+          // const originalFileName=file.name;
+          // const contentType=file.type;
+          // const params=new URLSearchParams();
+          // params.append("name",name);
+          // params.append("originalFileName",originalFileName);
+          // params.append("contentType",contentType);
+          // params.append("multipartFileBytesToBeUploaded",bytes);
+          // params.append("groupId",groupId);
+
+          const formData=new FormData();
+          formData.append("multipartFileToBeUploaded",file);
+          
+          
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.post("/usergroupmedias/sendmediatoagroup/+"+groupId,
+      formData,{
+
+        hearders:{
+          "Content-Type":"multipart/form-data"
+        },
+      auth: {
+        username: localStorage.getItem("username"),
+        password: localStorage.getItem("password")
+      }
+    }).then(response=>console.log(response.data));
+          fetchUser();
+         //window.history.go(0); //bu kod fonksiyonun çalışmasına engel oluyor
+         
+  }
     useEffect(()=> {
 
      
@@ -186,19 +241,21 @@ function fetchComments(){
       //axios kütüphanesi npm install axios kodu ile indirilebilir.
       //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
       //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
-     
-      axios.defaults.baseURL="http://localhost:8080";
-      const qs=require('qs');
-      axios.post("/comments/createcomment", 
-        qs.stringify({content:newCommentContent,
-          commentIdToBeQuoted:commentToBeQuoted.id, groupId:group.id
-        })
-      ,{
-        auth: {
-          username: localStorage.getItem("username"),
-          password: localStorage.getItem("password")
-        }
-      });
+     const params=new URLSearchParams();
+     params.append("groupId",groupId);
+     params.append("content",newCommentContent);
+     if(commentToBeQuoted!=null&&commentToBeQuoted.id!=null)
+     params.append("commentIdToBeQuoted",commentToBeQuoted.id);
+     axios.defaults.baseURL="http://localhost:8080";
+     axios.post("/comments/createcomment", 
+      params
+    ,{
+      auth: {
+        username: localStorage.getItem("username"),
+        password: localStorage.getItem("password")
+      }
+      
+    });
       
       
       fetchComments();
@@ -208,7 +265,7 @@ function fetchComments(){
       fetchBannedUsersOfUser();
       setNewCommentContent("");
       setCommentToBeQuoted({content:""});
-      window.history.go(0);
+      //window.history.go(0); // bu kod işlemin gerçekleşmemesine sebep oluyor
     
     }
     
@@ -313,6 +370,17 @@ function fetchComments(){
           </Form.Group>
         </Form>
             :<div>The owner or admins of this group have restricted your ability to type comments</div>}
+            {_.find(group.members,user)&&permissionsOfCurrentUserForAGroup.includes("SENDMESSAGE")?
+            <div>
+            <label>
+               <input type='file' id='file' onChange={(e)=>setFile(e.target.files[0])}></input>
+            </label>
+            <Button onClick={()=>sendMediaToAGroup()}>Send The Media</Button>
+            </div>
+            :
+            <div>The owner or admins of this group have restricted your ability to send media</div>
+
+            }
         <Modal show={showPopUp2} onHide={()=>setShowPopUp2(false)}>
     <Modal.Header>
       <Modal.Title>Members</Modal.Title>

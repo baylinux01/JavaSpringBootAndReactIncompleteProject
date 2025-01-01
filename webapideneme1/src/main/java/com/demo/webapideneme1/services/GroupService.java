@@ -83,6 +83,16 @@ public class GroupService {
 				comments.remove(comments.get(0));
 				
 			}
+			List<UserGroupPermission> ugps=userGroupPermissionRepository.findByGroup(group);
+			while(ugps.size()>0)
+			{
+				ugps.get(0).setUser(null);
+				ugps.get(0).setGroup(null);
+				userGroupPermissionRepository.save(ugps.get(0));
+				userGroupPermissionRepository.delete(ugps.get(0));
+				ugps.remove(ugps.get(0));
+			}
+			
 			groupRepository.delete(group);
 			return "success";
 		}else return "fail";
@@ -109,52 +119,6 @@ public class GroupService {
 		return null;
 	}
 
-	public String createGroup(HttpServletRequest request, String name) {
-		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
-		Principal pl=request.getUserPrincipal();
-		String username=pl.getName();
-		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
-		User owner=userRepository.findByUsername(username);
-		if(!name.matches("^[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{1,20}(\\s[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{1,20}){0,10}$"))
-			return "Grup is not suitable to format. Group could not be created";
-		List<Group> groups=groupRepository.findAll();
-		for(Group g : groups)
-		{
-			if(g.getName().equals(name)) return "A group name cannot be the same as the name of another group. Group creation unsuccessful";
-		}
-		if(owner==null) return "Group cannot be created. Group owner not found";
-		if(owner!=null)
-		{
-			Group group=new Group();
-			group.setOwner(owner);
-			if(group.getMembers()!=null)
-			{
-				group.getMembers().add(owner);
-				group.setMembers(group.getMembers());
-			}else
-			{
-				List<User> members=new ArrayList<User>();
-				members.add(owner);
-				group.setMembers(members);
-			}
-			UserGroupPermission usgrpe=userGroupPermissionRepository.findByUserAndGroup(owner,group);
-			if(usgrpe==null)
-			{
-				UserGroupPermission ugp=new UserGroupPermission();
-				ugp.setUser(owner);
-				ugp.setGroup(group);
-				String per=ugp.getPermissions();
-				per+="-ADDUSER-BANUSER";
-				ugp.setPermissions(per);
-				userGroupPermissionRepository.save(ugp);
-			}
-			 
-			group.setName(name);
-			groupRepository.save(group);
-			return "Group successfully created";
-		
-		}else return "Group could not be created";
-	}
 
 	public String updateGroupName(HttpServletRequest request, long groupId, String newgroupname) {
 		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
@@ -184,8 +148,8 @@ public class GroupService {
 		{
 			if(group.getOwner()!=user&&!group.getMembers().contains(user))
 			{
-				UserGroupPermission usgrpe=userGroupPermissionRepository.findByUserAndGroup(user,group);
-				if(usgrpe==null)
+				List<UserGroupPermission> usgrpe=userGroupPermissionRepository.findByUserAndGroup(user,group);
+				if(usgrpe.size()==0)
 				{
 					UserGroupPermission ugp=new UserGroupPermission();
 					ugp.setUser(user);
@@ -217,6 +181,54 @@ public class GroupService {
 			}
 			else return "User is the owner or not a member of the group";
 		}else return "Group not found";
+	}
+
+	public String createGroup(HttpServletRequest request, String name) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User owner=userRepository.findByUsername(username);
+		if(!name.matches("^[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{1,20}(\\s[öüÖÜĞğşŞçÇıİ|a-z|A-Z]{1,20}){0,10}$"))
+			return "Grup is not suitable to format. Group could not be created";
+		List<Group> groups=groupRepository.findAll();
+		for(Group g : groups)
+		{
+			if(g.getName().equals(name)) return "A group name cannot be the same as the name of another group. Group creation unsuccessful";
+		}
+		if(owner==null) return "Group cannot be created. Group owner not found";
+		if(owner!=null)
+		{
+			Group group=new Group();
+			group.setOwner(owner);
+			if(group.getMembers()!=null)
+			{
+				group.getMembers().add(owner);
+				group.setMembers(group.getMembers());
+			}else
+			{
+				List<User> members=new ArrayList<User>();
+				members.add(owner);
+				group.setMembers(members);
+			}
+			groupRepository.save(group);
+			List<UserGroupPermission> usgrpe=userGroupPermissionRepository.findByUserAndGroup(owner,group);
+			if(usgrpe.size()==0)
+			{
+				UserGroupPermission ugp=new UserGroupPermission();
+				ugp.setUser(owner);
+				ugp.setGroup(group);
+				String per=ugp.getPermissions();
+				per+="-ADDUSER-BANUSER";
+				ugp.setPermissions(per);
+				userGroupPermissionRepository.save(ugp);
+			}
+			 
+			group.setName(name);
+			groupRepository.save(group);
+			return "Group successfully created";
+		
+		}else return "Group could not be created";
 	}
 	
 

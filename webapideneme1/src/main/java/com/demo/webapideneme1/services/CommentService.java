@@ -105,26 +105,33 @@ public class CommentService {
 				&& group.getMembers().contains(user)
 		)
 		{
-			UserGroupPermission ugp=userGroupPermissionRepository.findByUserAndGroup(user, group);
-			String permissions=ugp.getPermissions();
-			if(permissions.contains("SENDMESSAGE"))
+			List<UserGroupPermission> ugp=userGroupPermissionRepository.findByUserAndGroup(user, group);
+			if(ugp.size()==1)
 			{
-				comment=new Comment();
-				comment.setOwner(user);
-				comment.setGroup(group);
-				comment.setContent(content);
-				if(commentToBeQuoted!=null)
+				String permissions=ugp.get(0).getPermissions();
+				if(permissions.contains("SENDMESSAGE"))
 				{
-					if(!commentToBeQuoted.getOwner().getBannedUsers().contains(user)
-							&&!user.getBannedUsers().contains(commentToBeQuoted.getOwner()))
+					comment=new Comment();
+					comment.setOwner(user);
+					comment.setGroup(group);
+					comment.setContent(content);
+					if(commentToBeQuoted!=null)
 					{
-						if(commentToBeQuoted.getGroup()==group)
-						comment.setQuotedComment(commentToBeQuoted);
-					}else comment.setQuotedComment(null);
+						if(!commentToBeQuoted.getOwner().getBannedUsers().contains(user)
+								&&!user.getBannedUsers().contains(commentToBeQuoted.getOwner()))
+						{
+							if(commentToBeQuoted.getGroup()==group)
+							comment.setQuotedComment(commentToBeQuoted);
+						}else comment.setQuotedComment(null);
+					}
+					else comment.setQuotedComment(null);
+					commentRepository.save(comment);
+					return "comment successfully created";
 				}
-				else comment.setQuotedComment(null);
-				commentRepository.save(comment);
-				return "comment successfully created";
+				else
+				{
+					return "permissions not found";
+				}
 			}
 			else
 			{

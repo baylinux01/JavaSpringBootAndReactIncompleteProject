@@ -42,5 +42,6 @@ public class UserGroupPermissionController {
 		return userGroupPermissionService.getPermissionsOfAUserForAGroup(request,userId,groupId);
 	}
 	
+	
 
 }

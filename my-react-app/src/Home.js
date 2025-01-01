@@ -143,8 +143,7 @@ export default function Home(
       axios.defaults.baseURL="http://localhost:8080";
       const qs=require('qs');
       axios.post("/groups/creategroup", 
-        qs.stringify( {ownerId: user.id,
-        name: newGroupName})
+        qs.stringify( {name: newGroupName})
       ,{
         auth: {
           username: localStorage.getItem("username"),
