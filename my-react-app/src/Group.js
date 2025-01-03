@@ -45,6 +45,21 @@ function fetchComments(){
     axios.defaults.baseURL="http://localhost:8080";
     axios.get("/posts/getpostsofagroup",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroupPosts([...response.data])});
   }
+  function downloadFile(fileName){
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/medias/downloadfilefaster"
+      ,{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")}
+      ,params:{fileName:fileName},responseType:'blob',
+    headers:{
+      "Content-Type":"application/octet-stream"
+    }}).then(response=>{
+        const url = window.URL.createObjectURL(new Blob([response.data])); 
+        const link = document.createElement('a'); 
+        link.href = url; link.setAttribute('download', fileName); 
+        document.body.appendChild(link); 
+        link.click();
+      });
+  }
   function fetchMembers(){
     axios.defaults.baseURL="http://localhost:8080";
     return axios.get("/groups/getonegroupmembersbygroupid",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroupMembers([...response.data])});
@@ -456,6 +471,7 @@ function fetchComments(){
               
             
             <Button variant='danger' onClick={()=>{deleteMedia(post.media.id)}}>Delete</Button>
+            <Button variant='primary' onClick={()=>{downloadFile(post.media.name)}}>Download</Button>
           </div>
           :<div></div>
         }
@@ -468,6 +484,7 @@ function fetchComments(){
               
             
             <Button variant='danger' onClick={()=>{deleteMedia(post.media.id)}}>Delete</Button>
+            <Button variant='primary' onClick={()=>{downloadFile(post.media.name)}}>Download</Button>
           </div>
           :<div></div>
         }
@@ -480,6 +497,7 @@ function fetchComments(){
               
             
             <Button variant='danger' onClick={()=>{deleteMedia(post.media.id)}}>Delete</Button>
+            <Button variant='primary' onClick={()=>{downloadFile(post.media.name)}}>Download</Button>
           </div>
           :<div></div>
         }

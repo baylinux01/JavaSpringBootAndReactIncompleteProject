@@ -1,12 +1,18 @@
 package com.demo.webapideneme1.services;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -118,6 +124,19 @@ public class MediaService {
 		else
 		{
 			return "error";
+		}
+	}
+	public ResponseEntity<Resource> downloadFileFaster(String fileName) {
+		try {
+			File fileToBeDownloaded=fileTransferService.getFileToBeDownloaded(fileName);
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+fileName+"\"")
+					.contentLength(fileToBeDownloaded.length())
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(new FileSystemResource(fileToBeDownloaded));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			return ResponseEntity.notFound().build();
 		}
 	}
 	
