@@ -19,6 +19,7 @@ const[newCommentContent,setNewCommentContent] =useState("");
 const[commentToBeQuoted,setCommentToBeQuoted]=useState({content:""});
 const[groupMembers,setGroupMembers]=useState([]);
 const[groupComments,setGroupComments]=useState([]);
+const [groupPosts,setGroupPosts]=useState([]);
 const[bannedUsersOfCommentOwner,setBannedUsersOfCommentOwner]=useState([]);
 const [showPopUp,setShowPopUp]=useState(false);
 const [showPopUp2,setShowPopUp2]=useState(false);
@@ -28,6 +29,7 @@ const [permissionsOfAUserForAGroup,setPermissionsOfAUserForAGroup]=useState("");
 const [permissionsOfCurrentUserForAGroup,setPermissionsOfCurrentUserForAGroup]=useState("");
 const [commentContentToBeEdited,setCommentContentToBeEdited]=useState("");
 const[file,setFile]=useState(null);
+const[imageUrl,setImageUrl]=useState("");
 
 const{groupId}=useParams();
 
@@ -38,6 +40,10 @@ function fetchGroup(){
 function fetchComments(){
     axios.defaults.baseURL="http://localhost:8080";
     axios.get("/comments/getcommentsofagroup",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroupComments([...response.data])});
+  }
+  function fetchPosts(){
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.get("/posts/getpostsofagroup",{auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{groupId:groupId}}).then((response)=>{setGroupPosts([...response.data])});
   }
   function fetchMembers(){
     axios.defaults.baseURL="http://localhost:8080";
@@ -83,6 +89,26 @@ function fetchComments(){
     axios.delete("/comments/deletecomment",
       {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{commentId:commentId}});
     fetchComments();
+    fetchPosts();
+    // axios.defaults.baseURL="http://localhost:8080";
+    // const qs=require('qs');
+    // axios.delete("/comments/deletecomment", 
+    //   qs.stringify({commentId:commentId
+    //   })
+    // ,{
+    //   auth: {
+    //     username: user.username,
+    //     password: password
+    //   }
+    // });
+  }
+  function deleteMedia(mediaId)
+  {
+    axios.defaults.baseURL="http://localhost:8080";
+    axios.delete("/medias/deletemedia",
+      {auth: {username: localStorage.getItem("username"),password: localStorage.getItem("password")},params:{id:mediaId}});
+    fetchComments();
+    fetchPosts();
     // axios.defaults.baseURL="http://localhost:8080";
     // const qs=require('qs');
     // axios.delete("/comments/deletecomment", 
@@ -111,7 +137,7 @@ function fetchComments(){
   //   },
   //   params: params
   // });
-  
+  fetchPosts();
   fetchComments();
   setShowPopUp(false);
   window.history.go(0);
@@ -148,6 +174,38 @@ function fetchComments(){
          axios.defaults.baseURL="http://localhost:8080";
     const qs=require('qs');
     axios.put("/usergrouppermissions/removesendmessagepermission", 
+      params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
+    }
+    function addSendMediaPermission(id)
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         const params=new URLSearchParams();
+         params.append("userId",id);
+         params.append("groupId",groupId);
+
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.put("/usergrouppermissions/addsendmediapermission", 
+      params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
+    }
+    function removeSendMediaPermission(id)
+        {
+            
+            
+          //axios kütüphanesi npm install axios kodu ile indirilebilir.
+          //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
+          //qs kullanmayınca post isteklerinde veriler api'ya null gidiyor
+         const params=new URLSearchParams();
+         params.append("userId",id);
+         params.append("groupId",groupId);
+
+         axios.defaults.baseURL="http://localhost:8080";
+    const qs=require('qs');
+    axios.put("/usergrouppermissions/removesendmediapermission", 
       params,{auth:{username:localStorage.getItem("username"),password:localStorage.getItem("password")}});
     }
     function readFile(f)
@@ -189,7 +247,7 @@ function fetchComments(){
           
          axios.defaults.baseURL="http://localhost:8080";
     const qs=require('qs');
-    axios.post("/usergroupmedias/sendmediatoagroup/+"+groupId,
+    axios.post("/medias/sendmediatoagroup/+"+groupId,
       formData,{
 
         hearders:{
@@ -210,6 +268,7 @@ function fetchComments(){
     
          fetchUser();
         fetchGroup();
+        fetchPosts();
         fetchComments();
         fetchMembers();   
         fetchBannedUsersOfUser();
@@ -234,9 +293,9 @@ function fetchComments(){
       fontSize:"2rem"
   }
 
-  function handlenewcomment(e)
+  function handlenewcomment()
     {
-        e.preventDefault();
+        
         
       //axios kütüphanesi npm install axios kodu ile indirilebilir.
       //qs kullanmak için önce npm i qs yazarak indirmek gerekiyor.
@@ -257,7 +316,7 @@ function fetchComments(){
       
     });
       
-      
+      fetchPosts();
       fetchComments();
       fetchMembers();
       fetchGroup();
@@ -281,106 +340,9 @@ function fetchComments(){
   return (
     
         <div style={disdiv}>
-          <Button variant='warning' onClick={()=>setShowPopUp2(true)}>See Members</Button>
+          
         <div style={baslik}>{group.name}</div>
-        {groupComments.map(comment=>
-        <div>
-        <ListGroup>
-        {comment.quotedComment!=null && comment.quotedComment.content!=null &&
-         comment.quotedComment.content.length>0? 
-          <div>
-        <ListGroup.Item style={{backGroundColor:"yellow"}}>Quoted Comment Owner: <Link to={"/users/user/"+comment.quotedComment.owner.id}>
-          {comment.quotedComment.owner.name}</Link></ListGroup.Item>
-        <ListGroup.Item>Quoted Comment Content:{comment.quotedComment.content}</ListGroup.Item>
-        </div>:
-      <div>
-      <div></div>
-      <div></div>
-      </div>}
-      
-      
-      
-        <ListGroup.Item>Comment Owner: <Link to={"/users/user/"+comment.owner.id}>{comment.owner.name} {comment.owner.surname}</Link></ListGroup.Item>
-        <ListGroup.Item>Comment Content: {comment.content}</ListGroup.Item>
-        {_.find(group.members,user)?
-          <Button variant="info" sync="true" onClick={()=>!_.find(bannedUsersOfUser,comment.owner.id)
-            && !_.find(bannedUsersOfCommentOwner,user)?
-            setCommentToBeQuoted({...comment}):
-        setCommentToBeQuoted(null)}>Quote</Button>
-          :<div></div>}
-    {_.isEqual(comment.owner,user)?
-    <div style={{display:"flex",columnGap:"10px", justifyContent:"end"}}>
-      <Button variant="warning" sync="true" onClick={()=>{setShowPopUp(true)}}>Edit</Button>
-          <Button variant="danger" sync="true" onClick={()=>deleteComment(comment.id)}>Delete</Button>
-          <Modal show={showPopUp} onHide={()=>setShowPopUp(false)}>
-    <Modal.Header>
-      <Modal.Title>Edit Message</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      <input type='text' id='newcontent' onChange={(e)=>setCommentContentToBeEdited(e.target.value)}></input>
-      
-    </Modal.Body>
-    <Modal.Footer>
-    <Button variant='primary' onClick={()=>{editCommentContent(comment.id,commentContentToBeEdited)}}>Edit Comment</Button>
-    <Button variant='primary' onClick={()=>{setShowPopUp(false)}}>Close Pop-Up</Button>
-    </Modal.Footer>
-    </Modal>
-          </div> 
-          :<div></div>}
-      </ListGroup>
-      </div>
-        )}
-        
-        
-        {commentToBeQuoted!=null && commentToBeQuoted.content.length!=0? 
-       <div>
-       <ListGroup>
-       <ListGroupItem>{commentToBeQuoted.content}</ListGroupItem>
-       </ListGroup>
-       
-       <Button variant="info" sync="true" onClick={()=>
-         setCommentToBeQuoted({content:""})}>Give up to quote comment </Button>
-       </div>
-       :<div></div>}
-        
-         {_.find(group.members,user)&&permissionsOfCurrentUserForAGroup.includes("SENDMESSAGE")?
-            <Form sync="true" onSubmit={(e)=>handlenewcomment(e)}>
-            {/* <Form action='http://localhost:8083/users/enteruser' method='post'> */}
-    
-            
-            
-          <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
-            <div style={{width:"auto"}}>
-              New Comment
-            </div>
-            <div>
-              <Form.Control type="text" placeholder="Comment" name="content" autoComplete="off" value={newCommentContent} onChange={(e)=>setNewCommentContent(e.target.value)}/>
-            </div>
-          </Form.Group>
-    
-          
-          
-         
-          
-    
-          <Form.Group as={Row} className="mb-3">
-            <Col sm={{ span: 10, offset: 2 }}>
-               <Button type="submit" >Make New Comment</Button> 
-            </Col>
-          </Form.Group>
-        </Form>
-            :<div>The owner or admins of this group have restricted your ability to type comments</div>}
-            {_.find(group.members,user)&&permissionsOfCurrentUserForAGroup.includes("SENDMESSAGE")?
-            <div>
-            <label>
-               <input type='file' id='file' onChange={(e)=>setFile(e.target.files[0])}></input>
-            </label>
-            <Button onClick={()=>sendMediaToAGroup()}>Send The Media</Button>
-            </div>
-            :
-            <div>The owner or admins of this group have restricted your ability to send media</div>
-
-            }
+        <Button variant='warning' onClick={()=>setShowPopUp2(true)}>See Members</Button>
         <Modal show={showPopUp2} onHide={()=>setShowPopUp2(false)}>
     <Modal.Header>
       <Modal.Title>Members</Modal.Title>
@@ -389,7 +351,7 @@ function fetchComments(){
       {groupMembers.map(member=>
       <div style={{display:"flex",columnGap:"10px"}}>
         <div>{member.name} {member.surname}</div>
-        {_.isEqual(user,group.owner)?
+        {_.isEqual(user,group.owner)&&!_.isEqual(member,user)?
         <Button variant='warning' onClick={()=>{setUser3Id(member.id);fetchPermissionsOfAUserForAGroup(member.id);setShowPopUp3(true)}}>Change Permissions</Button>
       :<div></div>
       }
@@ -403,7 +365,6 @@ function fetchComments(){
     <Button variant='primary' onClick={()=>{setShowPopUp2(false)}}>Close Pop-Up</Button>
     </Modal.Footer>
     </Modal>
-
     <Modal show={showPopUp3} onHide={()=>setShowPopUp3(false)}>
     <Modal.Header>
       <Modal.Title>Permissions</Modal.Title>
@@ -426,13 +387,13 @@ function fetchComments(){
     <span style={{marginLeft:"10px"}}></span>
     {permissionsOfAUserForAGroup.includes("SENDMEDIA")?
       <label>
-        <input type='checkbox' defaultChecked={true}>
+        <input type='checkbox' defaultChecked={true} onChange={()=>{removeSendMediaPermission(user3Id);fetchPermissionsOfAUserForAGroup(user3Id)}}>
         </input>
         SEND MEDIA
       </label>
       :
       <label>
-        <input type='checkbox' defaultChecked={false}>
+        <input type='checkbox' defaultChecked={false} onChange={()=>{addSendMediaPermission(user3Id);fetchPermissionsOfAUserForAGroup(user3Id)}}>
         </input>
         SEND MEDIA
       </label>
@@ -446,8 +407,117 @@ function fetchComments(){
     <Button variant='primary' onClick={()=>{fetchPermissionsOfAUserForAGroup(user3Id);setShowPopUp3(false)}}>Close Pop-Up</Button>
     </Modal.Footer>
     </Modal>
+        {groupPosts.map(post=>
+        <div>
+        {post.comment!=null?
+        <div>
+          {post.comment.quotedComment!=null?
+          <div>
+            <div>Quoted Comment Owner-{post.comment.quotedComment.owner.name} {post.comment.quotedComment.owner.surname}</div>
+            <div>Quoted Comment Content- {post.comment.quotedComment.content}</div>
+          </div>
+          :<div></div>
+          }
+          <div>Comment Owner-{post.comment.owner.name} {post.comment.owner.surname}</div>
+          <div>Comment Content- {post.comment.content}</div>
+          <div>
+            <Button onClick={()=>{setCommentToBeQuoted(post.comment)}}>Quote</Button>
+            <Modal show={showPopUp} onHide={()=>setShowPopUp(false)}>
+    <Modal.Header>
+      <Modal.Title>Edit Message</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <input type='text' id='newcontent' onChange={(e)=>setCommentContentToBeEdited(e.target.value)}></input>
+      
+    </Modal.Body>
+    <Modal.Footer>
+    <Button variant='primary' onClick={()=>{editCommentContent(post.comment.id,commentContentToBeEdited)}}>Edit Comment</Button>
+    <Button variant='primary' onClick={()=>{setShowPopUp(false)}}>Close Pop-Up</Button>
+    </Modal.Footer>
+    </Modal>
+            {_.isEqual(user,post.comment.owner)?
+            <Button variant='warning' onClick={()=>{setShowPopUp(true)}}>Edit</Button>
+            :<div></div>
+          }
+          {_.isEqual(user,post.comment.owner)||user.roles.includes("ADMIN")?
+            <Button variant='danger' onClick={()=>{deleteComment(post.comment.id)}}>Delete</Button>
+            :<div></div>
+          }
+          </div>
+        </div>
+        :<div></div>
+        }
+        {post.media!=null&&post.media.media_address!=null&&post.media.content_type!=null?
+        <div>
+          {post.media.content_type.includes("image")?
+          <div>
+            
+              <img src={post.media.media_address} style={{width:"50px",height:"50px"}}/>
+              
+            
+            <Button variant='danger' onClick={()=>{deleteMedia(post.media.id)}}>Delete</Button>
+          </div>
+          :<div></div>
+        }
+        {post.media.content_type.includes("audio")?
+          <div>
+            
+              <audio controls>
+                <source src={post.media.media_address} type={post.media.content_type}/>
+              </audio>
+              
+            
+            <Button variant='danger' onClick={()=>{deleteMedia(post.media.id)}}>Delete</Button>
+          </div>
+          :<div></div>
+        }
+        {post.media.content_type.includes("video")?
+          <div>
+            
+              <video controls>
+                <source src={post.media.media_address} type={post.media.content_type}/>
+              </video>
+              
+            
+            <Button variant='danger' onClick={()=>{deleteMedia(post.media.id)}}>Delete</Button>
+          </div>
+          :<div></div>
+        }
+        </div>
+        :<div></div>
+
+        }
     
         </div>
+    )}
+    {commentToBeQuoted.content!=""?
+    <div>
+      <div>Comment To Be Quoted- {commentToBeQuoted.content}</div>
+      <Button onClick={()=>{setCommentToBeQuoted({content:""})}}>Give Up To Quote</Button>
+    </div>
+    :
+    <div></div>
+  }
+  {_.find(group.members,user)&&permissionsOfCurrentUserForAGroup.includes("SENDMESSAGE")?
+  <div>
+    <input type='text' onChange={(e)=>{setNewCommentContent(e.target.value);console.log(newCommentContent)}}/>
+    <Button onClick={()=>handlenewcomment()}>Make New Comment</Button>
+    <br></br>
+  </div>
+  :
+  <div>The admins of this group have restricted your ability to send message</div>
+  }
+  {_.find(group.members,user)&&permissionsOfCurrentUserForAGroup.includes("SENDMEDIA")?
+  <div>
+    <br></br>
+    <input type='file' id='file' onChange={(e)=>{setFile(e.target.files[0])}}/>
+    <Button onClick={()=>sendMediaToAGroup()}>Send Media</Button>
+  </div>
+  :
+  <div>The admins of this group have restricted your ability to send message</div>
+  }
     
     
-  )}
+  </div>
+  
+)}

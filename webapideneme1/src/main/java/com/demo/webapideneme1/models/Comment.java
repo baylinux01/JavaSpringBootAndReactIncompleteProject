@@ -1,5 +1,9 @@
 package com.demo.webapideneme1.models;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -33,9 +37,9 @@ public class Comment {
 	@ManyToOne
 	private Group group;
 	//@JsonFormat(shape=JsonFormat.Shape.STRING,pattern="dd-MM-yyyy")
-	private Date commentDate=new Date();
+	private LocalDateTime commentDate=LocalDateTime.now(ZoneId.of("Turkey"));
 	//@JsonFormat(shape=JsonFormat.Shape.STRING,pattern="dd-MM-yyyy")
-	private Date commentEditDate=new Date();
+	private LocalDateTime commentEditDate=LocalDateTime.now(ZoneId.of("Turkey"));
 	
 	
 	
@@ -106,27 +110,34 @@ public class Comment {
 
 
 
-	public Date getCommentDate() {
+	public LocalDateTime getCommentDate() {
 		return commentDate;
 	}
 
 
 
-	public void setCommentDate(Date commentDate) {
+	public void setCommentDate(LocalDateTime commentDate) {
 		this.commentDate = commentDate;
 	}
 
 
 
-	public Date getCommentEditDate() {
+	public LocalDateTime getCommentEditDate() {
 		return commentEditDate;
 	}
 
 
 
-	public void setCommentEditDate(Date commentEditDate) {
+	public void setCommentEditDate(LocalDateTime commentEditDate) {
 		this.commentEditDate = commentEditDate;
 	}
+
+	
+
+
+
+
+	
 	
 	
 	

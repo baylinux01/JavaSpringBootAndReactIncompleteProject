@@ -1,6 +1,8 @@
 package com.demo.webapideneme1.services;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.demo.webapideneme1.models.Comment;
 import com.demo.webapideneme1.models.Group;
+import com.demo.webapideneme1.models.Post;
 import com.demo.webapideneme1.models.User;
 import com.demo.webapideneme1.models.UserGroupPermission;
 import com.demo.webapideneme1.repositories.CommentRepository;
 import com.demo.webapideneme1.repositories.GroupRepository;
+import com.demo.webapideneme1.repositories.PostRepository;
 import com.demo.webapideneme1.repositories.UserGroupPermissionRepository;
 import com.demo.webapideneme1.repositories.UserRepository;
 
@@ -26,18 +30,20 @@ public class CommentService {
 	UserRepository userRepository;
 	GroupRepository groupRepository;
 	UserGroupPermissionRepository userGroupPermissionRepository;
-
+	PostRepository postRepository;
 	
 	@Autowired
 	public CommentService(CommentRepository commentRepository
 			,UserRepository userRepository
 			,GroupRepository groupRepository
-			,UserGroupPermissionRepository userGroupPermissionRepository) {
+			,UserGroupPermissionRepository userGroupPermissionRepository
+			,PostRepository postRepository) {
 		super();
 		this.commentRepository = commentRepository;
 		this.userRepository=userRepository;
 		this.groupRepository=groupRepository;
 		this.userGroupPermissionRepository=userGroupPermissionRepository;
+		this.postRepository=postRepository;
 	}
 
 	public String saveComment(Comment comment) {
@@ -65,6 +71,13 @@ public class CommentService {
 		Comment comment=commentRepository.findById(commentId).orElse(null);
 		if(comment!=null&&(comment.getOwner()==user||user.getRoles().contains("ADMIN")))
 		{
+			Post post=postRepository.findByComment(comment);
+			if(post!=null)
+			{
+				post.setComment(null);
+				postRepository.save(post);
+				postRepository.delete(post);
+			}
 			commentRepository.deleteById(commentId);
 			return "Comment succesfully deleted";
 		}
@@ -111,6 +124,7 @@ public class CommentService {
 				String permissions=ugp.get(0).getPermissions();
 				if(permissions.contains("SENDMESSAGE"))
 				{
+					Post post=new Post();
 					comment=new Comment();
 					comment.setOwner(user);
 					comment.setGroup(group);
@@ -126,6 +140,10 @@ public class CommentService {
 					}
 					else comment.setQuotedComment(null);
 					commentRepository.save(comment);
+					post.setComment(comment);
+					post.setUser(user);
+					post.setGroup(group);
+					postRepository.save(post);
 					return "comment successfully created";
 				}
 				else
@@ -153,7 +171,7 @@ public class CommentService {
 		if(comment!=null&&comment.getOwner()==user)
 		{
 			comment.setContent(newcontent);
-			comment.setCommentEditDate(new Date());
+			comment.setCommentEditDate(LocalDateTime.now(ZoneId.of("Turkey")));
 			commentRepository.save(comment);
 			
 			return "Comment succesfully updated";

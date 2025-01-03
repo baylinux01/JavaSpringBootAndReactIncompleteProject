@@ -35,6 +35,16 @@ public class UserGroupPermissionController {
 	{
 		return userGroupPermissionService.removeSendMessagePermission(request,userId,groupId);
 	}
+	@PutMapping("/addsendmediapermission")
+	public String addSendMediaPermissions(HttpServletRequest request,Long userId,Long groupId)
+	{
+		return userGroupPermissionService.addSendMediaPermission(request,userId,groupId);
+	}
+	@PutMapping("/removesendmediapermission")
+	public String removeSendMediaPermissions(HttpServletRequest request,Long userId,Long groupId)
+	{
+		return userGroupPermissionService.removeSendMediaPermission(request,userId,groupId);
+	}
 	
 	@GetMapping("/getpermissionsofauserforagroup")
 	public String getPermissionsOfAUserForAGroup(HttpServletRequest request,Long userId,Long groupId)

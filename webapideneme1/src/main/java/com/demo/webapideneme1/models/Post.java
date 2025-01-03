@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class UserGroupMedia {
+public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -15,8 +15,10 @@ public class UserGroupMedia {
 	private User user;
 	@ManyToOne
 	private Group group;
-	private String media_address;
-	private String content_type;
+	@ManyToOne
+	private Comment comment;
+	@ManyToOne
+	private Media media;
 	
 	public Long getId() {
 		return id;
@@ -36,18 +38,19 @@ public class UserGroupMedia {
 	public void setGroup(Group group) {
 		this.group = group;
 	}
-	public String getMedia_address() {
-		return media_address;
+	public Comment getComment() {
+		return comment;
 	}
-	public void setMedia_address(String media_address) {
-		this.media_address = media_address;
+	public void setComment(Comment comment) {
+		this.comment = comment;
 	}
-	public String getContent_type() {
-		return content_type;
+	public Media getMedia() {
+		return media;
 	}
-	public void setContent_type(String content_type) {
-		this.content_type = content_type;
+	public void setMedia(Media media) {
+		this.media = media;
 	}
+	
 	
 	
 }

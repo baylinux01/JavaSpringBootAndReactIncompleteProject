@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,21 +16,21 @@ import org.springframework.web.multipart.MultipartFile;
 import com.demo.webapideneme1.models.ByteArrayMultipartFile;
 import com.demo.webapideneme1.models.Group;
 import com.demo.webapideneme1.models.User;
-import com.demo.webapideneme1.models.UserGroupMedia;
-import com.demo.webapideneme1.services.UserGroupMediaService;
+import com.demo.webapideneme1.models.Post;
+import com.demo.webapideneme1.services.MediaService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/usergroupmedias")
-public class UserGroupMediaController {
+@RequestMapping("/medias")
+public class MediaController {
 
-	UserGroupMediaService userGroupMediaService;
+	MediaService mediaService;
 	@Autowired
-	public UserGroupMediaController(UserGroupMediaService userGroupMediaService) {
+	public MediaController(MediaService mediaService) {
 		super();
-		this.userGroupMediaService = userGroupMediaService;
+		this.mediaService = mediaService;
 	}
 	@PostMapping("/sendmediatoagroupasbytes")
 	public String sendMediaToAGroupAsBytes(HttpServletRequest request,
@@ -37,17 +38,22 @@ public class UserGroupMediaController {
 	{
 		MultipartFile multipartFileToBeUploaded=new ByteArrayMultipartFile
 				(name,originalFileName,contentType,multipartFileBytesToBeUploaded);
-		return userGroupMediaService.sendMediaToAGroup(request,multipartFileToBeUploaded,groupId);
+		return mediaService.sendMediaToAGroup(request,multipartFileToBeUploaded,groupId);
 	}
 	@PostMapping("/sendmediatoagroup/{groupId}")
 	public String sendMediaToAGroup(HttpServletRequest request,MultipartFile multipartFileToBeUploaded,@PathVariable Long groupId)
 	{
 		
-		return userGroupMediaService.sendMediaToAGroup(request,multipartFileToBeUploaded,groupId);
+		return mediaService.sendMediaToAGroup(request,multipartFileToBeUploaded,groupId);
 	}
 	@GetMapping("/getmediasofagroup")
-	public List<UserGroupMedia> getMediasOfAGroup(HttpServletRequest request,Long groupId)
+	public List<Post> getMediasOfAGroup(HttpServletRequest request,Long groupId)
 	{
-		return userGroupMediaService.getMediasOfAGroup(request,groupId);
+		return mediaService.getMediasOfAGroup(request,groupId);
+	}
+	@DeleteMapping("/deletemedia")
+	public String deleteMedia(HttpServletRequest request,Long id)
+	{
+		return mediaService.deleteMedia(request,id);
 	}
 }

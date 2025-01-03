@@ -114,6 +114,65 @@ public class UserGroupPermissionService {
 		}
 		return "an error occurred";
 	}
+	public String addSendMediaPermission(HttpServletRequest request, Long userId, Long groupId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user1=userRepository.findByUsername(username);
+		User user2=userRepository.findById(userId).orElse(null);
+		Group group=groupRepository.findById(groupId).orElse(null);
+		if(user1!=null&&user2!=null&&group!=null&&group.getOwner()==user1)
+		{
+			List<UserGroupPermission> ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
+			if(ugp.size()==1)
+			{
+				String permissions=ugp.get(0).getPermissions();
+				if(!permissions.contains("SENDMEDIA"))
+				permissions=permissions+"-SENDMEDIA";
+				permissions=permissions.replaceAll("--", "-");
+				ugp.get(0).setPermissions(permissions);
+				userGroupPermissionRepository.save(ugp.get(0));
+				return "SENDMEDIA permission successfully added";
+			}
+			else
+			{
+				return "userGroupPermission object not found";
+			}
+			
+		}
+		return "an error occurred";
+	}
+	public String removeSendMediaPermission(HttpServletRequest request, Long userId, Long groupId) {
+		/*jwt olmadan requestten kullanıcı adını alma kodları başlangıcı*/		
+		Principal pl=request.getUserPrincipal();
+		String username=pl.getName();
+		/*jwt olmadan requestten kullanıcı adını alma kodları sonu*/
+		User user1=userRepository.findByUsername(username);
+		User user2=userRepository.findById(userId).orElse(null);
+		Group group=groupRepository.findById(groupId).orElse(null);
+		if(user1!=null&&user2!=null&&group!=null&&group.getOwner()==user1)
+		{
+			List<UserGroupPermission> ugp=userGroupPermissionRepository.findByUserAndGroup(user2, group);
+			if(ugp.size()==1)
+			{
+				String permissions=ugp.get(0).getPermissions();
+				if(permissions.contains("SENDMEDIA"))
+				permissions=permissions.replaceAll("-SENDMEDIA","");
+				permissions=permissions.replaceAll("SENDMEDIA","");
+				permissions=permissions.replaceAll("--", "-");
+				ugp.get(0).setPermissions(permissions);
+				userGroupPermissionRepository.save(ugp.get(0));
+				return "SENDMEDIA permission successfully removed";
+			}
+			else
+			{
+				return "userGroupPermission object not found";
+			}
+			
+		}
+		return "an error occurred";
+	}
 	
 	
 	
